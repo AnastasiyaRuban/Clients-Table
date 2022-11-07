@@ -1,5 +1,10 @@
+
+@import "~bootstrap/scss/bootstrap";
 :root {
+  --grey-light: #E7E5EB
+;
   --txt_grey: #B0B0B0;
+  --grey: #C8C5D1  ;
   --firm: #9873FF;
   --black: #333;
 }
@@ -9,24 +14,24 @@
   font-family: 'OpenSansRegular';
   font-style: normal;
   font-weight: 400;
-  src: url('../../assets//fonts/OpenSans-Regular.woff2') format('woff2'),
-      url('../../assets//fonts/OpenSans-Regular.woff') format('woff')
+  src: url('../assets//fonts/OpenSans-Regular.woff2') format('woff2'),
+      url('../assets//fonts/OpenSans-Regular.woff') format('woff')
 }
 
 @font-face {
   font-family: 'OpenSansSemiBold';
   font-style: normal;
   font-weight: 600;
-  src: url('../../assets//fonts/OpenSans-SemiBold.woff2') format('woff2'),
-      url('../../assets//fonts/OpenSans-SemiBold.woff') format('woff')
+  src: url('../assets//fonts/OpenSans-SemiBold.woff2') format('woff2'),
+      url('../assets//fonts/OpenSans-SemiBold.woff') format('woff')
 }
 
 @font-face {
   font-family: 'OpenSansBold';
   font-style: normal;
   font-weight: 700;
-  src: url('../../assets//fonts/OpenSans-Bold.woff2') format('woff2'),
-      url('../../assets//fonts/OpenSans-Bold.woff') format('woff')
+  src: url('../assets//fonts/OpenSans-Bold.woff2') format('woff2'),
+      url('../assets//fonts/OpenSans-Bold.woff') format('woff')
 }
 
 
@@ -88,6 +93,7 @@ body {
   font-weight: inherit;
   letter-spacing: inherit;
   outline: none;
+  border-radius: 0;
 }
 
 
@@ -99,6 +105,7 @@ body {
   cursor: pointer;
   border: none;
   outline: none;
+  border-radius: 0;
 }
 
 .title,
@@ -145,8 +152,125 @@ border: 2px solid var(--firm);
   padding: 40px 90px;
 }
 
-.title {
+.bodyApp-title {
   font-size: 24px;
   font-family: 'OpenSansBold';
   color: var(--black);
+}
+
+.addUserButton {
+  padding: 13px 27px;
+  margin: 0 auto;
+  width: fit-content;
+  border: 1px solid var(--firm);
+  color: var(--firm);
+  font-family: 'OpenSansSemiBold';
+}
+
+.btn:hover {
+  color: var(--firm);
+   border-color: var(--firm); 
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(51, 51, 51, 0.6);
+}
+
+.popupContent {
+  position: relative;
+  min-width: 450px;
+  background-color: #fff;
+  padding: 24px 30px 30px;
+}
+
+.closeButtonPopup {
+ position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+
+  &::after, 
+  &::before {
+     position: absolute;
+    content: '';
+    width: 2px;
+    height: 15px;
+    background-color: var(--txt_grey);
+  } 
+  &::after {
+    transform: rotate(45deg);
+  }
+  &::before {
+    transform: rotate(-45deg);
+  }
+}
+
+.titlePopup {
+  width: 100%;
+  margin-bottom: 16px;
+  color: var(--black);
+  font-size: 18px;
+  font-family: 'OpenSansBold';
+}
+
+.actionButtonPopup {
+  padding: 12px 35px;
+  margin-bottom: 5px;
+  width: fit-content;
+  background-color: var(--firm);
+  color: #fff;
+  font-family: 'OpenSansSemiBold'
+}
+
+.additionalButtonPopup {
+  font-size: 12px;
+  border-bottom:1px solid var(--black);
+  line-height: 10px;
+}
+
+
+.buttonAddContact {
+  font-family: 'OpenSansSemiBold';
+  font-size: 14px;
+}
+
+
+.inputContactsGroup {
+  height: 37px;
+  width: 100%;
+}
+
+.dropdown-toggle {
+  height: 100%;
+  min-width: 123px;
+  padding: 8px 12px;
+  background-color: var(--grey-light);
+  border: 1px solid var(--txt_grey);
+  color: var(--black);
+  font-size: 12px;
+  text-align: start;
+}
+
+.dropdown-toggle::after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+}
+
+
+.inputContact {
+  height: 100%;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--txt_grey);
+  color: var(--black);
+  border-left: none;
+  color: #B0B0B0;
+  font-size: 14px;
 }

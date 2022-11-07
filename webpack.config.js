@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
+const path = require('path');
 
 module.exports = (env) => ({
   entry: './src/index.js', //точка входа
@@ -55,38 +56,6 @@ module.exports = (env) => ({
   devServer: {
     historyApiFallback: true,
     hot: true,
+    static: path.join(__dirname, 'assets'),
   },
 });
-// module.exports = {
-//   entry: './src/index.js', //точка входа
-//   output: {
-//     filename: 'main.js',
-//     publicPath: '/',
-//   }, //что получаем на выходе
-//   module: {
-//     rules: [
-//       {
-//         test: /\.(png|svg|jpg|jpeg|gif|ttf)$/i,
-//         type: 'asset/resource',
-//       },
-//       {
-//         test: /\.scss$/i,
-//         use: [
-//           // Creates `style` nodes from JS strings
-//           'style-loader',
-//           // Translates CSS into CommonJS
-//           'css-loader',
-//           // Compiles Sass to CSS
-//           'sass-loader',
-//         ],
-//       },
-//     ]
-//   },
-//   plugins: [
-//     new HtmlWebpackPlugin(),
-//   ],
-//   devServer: {
-//     historyApiFallback: true,
-//     hot: true
-//   }
-// }
