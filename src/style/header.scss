@@ -274,3 +274,28 @@ border: 2px solid var(--firm);
   color: #B0B0B0;
   font-size: 14px;
 }
+
+.input-patronimic,
+.input-name,
+.input-surname
+ {
+  height: 0;
+  
+}
+
+
+.label-surname,
+.label-name,
+.label-patronimic{
+  font-size: 14px;
+  color: var(--txt_grey);
+  border-bottom: 1px solid rgba(200, 197, 209, 0.5);
+}
+
+.label-surname::after,
+.label-name::after {
+ content: '*';
+ color: var(--firm);
+ font-family: 'OpenSansSemiBold';
+ 
+}

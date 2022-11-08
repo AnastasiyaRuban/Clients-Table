@@ -67,26 +67,18 @@ export function openPopup(goal, client = {}) {
   return popup;
 }
 
-function createPopupBody() {}
-
 function closePopup() {
   const popup = document.querySelector('.popup');
   popup.remove();
 }
 
-function createInputGroup(
-  label,
-  id,
-  placeholder,
-  type,
-  classGroup,
-  value = ''
-) {
+function createInputGroup(label, id, type, classGroup, dataClient = {}) {
   const labelInput = el(
     'label',
     {
       for: id,
-      style: 'padding: 0 12px; font-size: 0.9rem; margin-bottom: 5px',
+      style: 'font-size: 0.9rem; margin-bottom: 5px; width: 100%',
+      class: `label-${id}`,
     },
     label
   );
@@ -94,12 +86,13 @@ function createInputGroup(
   const input = el(
     'input',
     {
-      class: 'form-control input-reset',
-      placeholder: placeholder,
+      class: `form-control input-reset input-${id}`,
+      // placeholder: label,
+      // placeholder: id == 'patronimic' ? label : `${label}* `,
       id: id,
       type: type,
       required: true,
-      value,
+      value: (dataClient = {} ? '' : dataClient[id]),
     },
     ''
   );
@@ -112,10 +105,16 @@ function createInputGroup(
     [labelInput, input]
   );
 
+  labelInput.addEventListener('click', () => {
+    input.style.height = '20px';
+    input.style.borderBottom = '1px solid rgba(200, 197, 209, 0.5)';
+    labelInput.style.borderBottom = 'none';
+  });
+
   return inputGroup;
 }
 
-function createForm() {
+function createForm(client = {}) {
   const form = el(
     'form',
     {
@@ -123,9 +122,9 @@ function createForm() {
       style: 'width: 100%',
     },
     [
-      createInputGroup('Фамилия', 'surname', '', 'text', 'groupSurname'),
-      createInputGroup('Имя', 'name', '', 'text', 'groupName'),
-      createInputGroup('Отчество', 'patronimic', '', 'text', 'groupPatronimic'),
+      createInputGroup('Фамилия', 'surname', 'text', 'groupSurname'),
+      createInputGroup('Имя', 'name', 'text', 'groupName'),
+      createInputGroup('Отчество', 'patronimic', 'text', 'groupPatronimic'),
     ]
   );
 
