@@ -1,14 +1,14 @@
 import { el } from 'redom';
 
 export function openPopup(goal, client = {}) {
-  const popup = document.createElement('div');
-  const popupContent = document.createElement('div');
-  const title = document.createElement('h2');
-  const closeButton = document.createElement('button');
-  const actionButton = document.createElement('button');
-  const additionalButton = document.createElement('button');
-  const popupBody = createForm();
-  const addContactButton = createButtonAddContact();
+  const popup = document.createElement('div'),
+    popupContent = document.createElement('div'),
+    title = document.createElement('h2'),
+    closeButton = document.createElement('button'),
+    actionButton = document.createElement('button'),
+    additionalButton = document.createElement('button'),
+    popupBody = createForm(),
+    addContactButton = createButtonAddContact();
 
   popup.classList.add(
     'popup',
@@ -87,8 +87,6 @@ function createInputGroup(label, id, type, classGroup, dataClient = {}) {
     'input',
     {
       class: `form-control input-reset input-${id}`,
-      // placeholder: label,
-      // placeholder: id == 'patronimic' ? label : `${label}* `,
       id: id,
       type: type,
       required: true,
@@ -149,70 +147,18 @@ function createInputContact() {
     { class: 'input-group input-reset inputContactsGroup mb-3' },
     [
       el(
-        'div',
+        'select',
         {
-          class: 'input-group-prepend',
+          class: 'form-select',
+          'aria-label': 'Default select example',
         },
         [
-          el(
-            'button',
-            {
-              class: 'btn dropdown-toggle button-reset',
-              type: 'button',
-              'data-toggle': 'dropdown',
-              'aria-haspopup': 'true',
-              'aria-expanded': 'false',
-            },
-            'Телефон'
-          ),
-          el(
-            'div',
-            {
-              class: 'dropdown-menu',
-            },
-            [
-              el(
-                'a',
-                {
-                  class: 'dropdown-item',
-                  href: '#',
-                },
-                'Доп. телефон'
-              ),
-              el(
-                'a',
-                {
-                  class: 'dropdown-item',
-                  href: '#',
-                },
-                'Email'
-              ),
-              el(
-                'a',
-                {
-                  class: 'dropdown-item',
-                  href: '#',
-                },
-                'Vk'
-              ),
-              el(
-                'a',
-                {
-                  class: 'dropdown-item',
-                  href: '#',
-                },
-                'Facebook'
-              ),
-              el(
-                'a',
-                {
-                  class: 'dropdown-item',
-                  href: '#',
-                },
-                'Twitter'
-              ),
-            ]
-          ),
+          el('option', { value: 1, selected: 'selected' }, 'Телефон'),
+          el('option', { value: 2 }, 'Доп. телефон'),
+          el('option', { value: 3 }, 'Email'),
+          el('option', { value: 4 }, 'Vk'),
+          el('option', { value: 5 }, 'Facebook'),
+          el('option', { value: 6 }, 'Twitter'),
         ]
       ),
       el(
@@ -220,7 +166,7 @@ function createInputContact() {
         {
           type: 'text',
           class: 'form-control inputContact input-reset',
-          ariaLabel: 'Text input with dropdown button',
+          'aria-label': 'Text input with dropdown button',
           placeholder: 'Введите данные контакта',
         },
         ''
@@ -228,5 +174,8 @@ function createInputContact() {
     ]
   );
 
+  input.addEventListener('click', () => {
+    console.log(document.querySelector('select').value);
+  });
   return input;
 }
