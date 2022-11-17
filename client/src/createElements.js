@@ -1,4 +1,5 @@
 import { el } from 'redom';
+import { openPopup } from './popup.js';
 import './style/header.scss';
 
 function createSvg(id, height, width) {
@@ -42,7 +43,7 @@ function createBodyApp() {
   const bodyApp = document.createElement('div'),
     title = createTitle(),
     table = createTable(),
-    addButton = createAddUserButton();
+    addButton = createaddClientButton();
   bodyApp.classList.add('bodyApp', 'd-flex', 'flex-column');
   bodyApp.append(title, table.table, addButton);
 
@@ -81,38 +82,35 @@ function createTable() {
   return { table, tableBody };
 }
 
-function createAddUserButton() {
+function createaddClientButton() {
   //return button;
   const button = document.createElement('button');
 
-  button.classList.add('button-reset', 'btn', 'addUserButton');
+  button.classList.add('button-reset', 'btn', 'addClientButton');
   button.innerHTML = `Добавить клиента`;
+
+  button.addEventListener('click', () => {
+    const popup = openPopup('addClient');
+    document.body.append(popup);
+  });
 
   return button;
 }
 
-export function addClientToTable(client) {
-  const table = createTable();
+export function createClientItem(client) {
+  const actionButton = createActionButton(client);
+
   const rowTable = el('tr', { id: client.id }, [
     el('th', `${client.id}`),
-    el('th', `${client.name} ${client.patronomic} ${client.surname}`),
+    el('th', `${client.name} ${client.patronymic} ${client.surname}`),
     el('th', `${client.date}`),
     el('th', `${client.dateChanging ? client.dateChanging : ''}`),
     el('th', `${client.contacts.phone}`),
+    el('th', [actionButton.changeButton, actionButton.deleteButton]),
   ]);
 
-  console.log(rowTable);
-  console.log(table.tableBody);
-
-  table.tableBody.append(rowTable);
+  return rowTable;
 }
-
-// <tr>
-//   <th scope='row'>1</th>
-//   <td>Mark</td>
-//   <td>Otto</td>
-//   <td>@mdo</td>
-// </tr>;
 
 export function createContainer() {
   //return { container, bodyApp }
@@ -123,4 +121,33 @@ export function createContainer() {
       bodyApp.bodyApp,
     ]);
   return { container, bodyApp };
+}
+
+function createActionButton(client) {
+  const changeButton = el(
+      'button',
+      { class: 'action-button button-reset button-change' },
+      [createSvg('edit', 16, 16), 'Изменить']
+    ),
+    deleteButton = el(
+      'button',
+      { class: 'action-button button-reset button-delete' },
+      [createSvg('cancel', 16, 16), 'Удалить']
+    );
+
+  changeButton.addEventListener('click', () => {
+    const popup = openPopup('changeClient', client);
+    document.body.append(popup);
+  });
+
+  deleteButton.addEventListener('click', () => {
+    const popup = openPopup('removeClient', client);
+    console.log(client);
+    document.body.append(popup);
+  });
+
+  return {
+    changeButton,
+    deleteButton,
+  };
 }

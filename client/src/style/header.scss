@@ -158,7 +158,7 @@ border: 2px solid var(--firm);
   color: var(--black);
 }
 
-.addUserButton {
+.addClientButton {
   padding: 13px 27px;
   margin: 0 auto;
   width: fit-content;
@@ -298,4 +298,12 @@ border: 2px solid var(--firm);
  color: var(--firm);
  font-family: 'OpenSansSemiBold';
  
+}
+
+.action-button:hover {
+  color: var(--firm);
+}
+
+.button-change {
+  margin-right: 30px;
 }

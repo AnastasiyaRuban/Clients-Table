@@ -7,7 +7,7 @@ export function openPopup(goal, client = {}) {
     closeButton = document.createElement('button'),
     actionButton = document.createElement('button'),
     additionalButton = document.createElement('button'),
-    popupBody = createForm(),
+    popupForm = createForm(client),
     addContactButton = createButtonAddContact();
 
   popup.classList.add(
@@ -28,17 +28,17 @@ export function openPopup(goal, client = {}) {
   additionalButton.classList.add('additionalButtonPopup', 'button-reset');
 
   switch (goal) {
-    case 'addUser':
+    case 'addClient':
       title.textContent = 'Новый клиент';
       actionButton.textContent = 'Сохранить';
       additionalButton.textContent = 'Отмена';
       break;
-    case 'changeUser':
-      title.textContent = 'Изменить данные';
+    case 'changeClient':
+      title.innerHTML = `Изменить данные <span>ID: ${client.id}</span>`;
       actionButton.textContent = 'Сохранить';
       additionalButton.textContent = 'Удалить клиента';
       break;
-    case 'removeUser':
+    case 'removeClient':
       title.textContent = 'Удалить клиента';
       actionButton.textContent = 'Удалить';
       additionalButton.textContent = 'Отмена';
@@ -48,7 +48,8 @@ export function openPopup(goal, client = {}) {
   popupContent.append(
     title,
     closeButton,
-    popupBody,
+    popupForm,
+    // goal == 'changeClient' ? createInputContact(client) : '',
     addContactButton,
     actionButton,
     additionalButton
@@ -61,7 +62,10 @@ export function openPopup(goal, client = {}) {
 
   addContactButton.addEventListener('click', () => {
     const inputContacts = createInputContact();
-    popupBody.append(inputContacts);
+    popupForm.append(inputContacts.inputContact);
+    // inputContacts.select.value = 3;
+    // inputContacts.input.value = 'dfdfdf';
+    console.log(createInputContact());
   });
 
   return popup;
@@ -72,7 +76,7 @@ function closePopup() {
   popup.remove();
 }
 
-function createInputGroup(label, id, type, classGroup, dataClient = {}) {
+function createInputGroup(label, id, type, classGroup, inputValue = '') {
   const labelInput = el(
     'label',
     {
@@ -90,11 +94,12 @@ function createInputGroup(label, id, type, classGroup, dataClient = {}) {
       id: id,
       type: type,
       required: true,
-      value: (dataClient = {} ? '' : dataClient[id]),
+      value: inputValue,
     },
     ''
   );
 
+  input.style.height = inputValue == '' ? '0px' : '20px';
   const inputGroup = el(
     'div',
     {
@@ -120,11 +125,24 @@ function createForm(client = {}) {
       style: 'width: 100%',
     },
     [
-      createInputGroup('Фамилия', 'surname', 'text', 'groupSurname'),
-      createInputGroup('Имя', 'name', 'text', 'groupName'),
-      createInputGroup('Отчество', 'patronimic', 'text', 'groupPatronimic'),
+      createInputGroup(
+        'Фамилия',
+        'surname',
+        'text',
+        'groupSurname',
+        client.surname
+      ),
+      createInputGroup('Имя', 'name', 'text', 'groupName', client.name),
+      createInputGroup(
+        'Отчество',
+        'patronymic',
+        'text',
+        'groupPatronymic',
+        client.patronymic
+      ),
     ]
   );
+  console.log(client);
 
   return form;
 }
@@ -142,40 +160,41 @@ function createButtonAddContact() {
 }
 
 function createInputContact() {
-  const input = el(
-    'div',
-    { class: 'input-group input-reset inputContactsGroup mb-3' },
+  const select = el(
+    'select',
+    {
+      class: 'form-select',
+      'aria-label': 'Default select example',
+    },
     [
-      el(
-        'select',
-        {
-          class: 'form-select',
-          'aria-label': 'Default select example',
-        },
-        [
-          el('option', { value: 1, selected: 'selected' }, 'Телефон'),
-          el('option', { value: 2 }, 'Доп. телефон'),
-          el('option', { value: 3 }, 'Email'),
-          el('option', { value: 4 }, 'Vk'),
-          el('option', { value: 5 }, 'Facebook'),
-          el('option', { value: 6 }, 'Twitter'),
-        ]
-      ),
-      el(
-        'input',
-        {
-          type: 'text',
-          class: 'form-control inputContact input-reset',
-          'aria-label': 'Text input with dropdown button',
-          placeholder: 'Введите данные контакта',
-        },
-        ''
-      ),
+      el('option', { value: 1 }, 'Телефон'),
+      el('option', { value: 2 }, 'Доп. телефон'),
+      el('option', { value: 3 }, 'Email'),
+      el('option', { value: 4 }, 'Vk'),
+      el('option', { value: 5 }, 'Facebook'),
+      el('option', { value: 6 }, 'Twitter'),
     ]
   );
 
-  input.addEventListener('click', () => {
+  const input = el(
+    'input',
+    {
+      type: 'text',
+      class: 'form-control inputContact input-reset',
+      'aria-label': 'Text input with dropdown button',
+      placeholder: 'Введите данные контакта',
+    },
+    ''
+  );
+
+  const inputContact = el(
+    'div',
+    { class: 'input-group input-reset inputContactsGroup mb-3' },
+    [select, input]
+  );
+
+  inputContact.addEventListener('click', () => {
     console.log(document.querySelector('select').value);
   });
-  return input;
+  return { inputContact, select, input };
 }
