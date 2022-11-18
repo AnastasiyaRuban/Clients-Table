@@ -48,9 +48,16 @@ export function openPopup(goal, client = {}) {
   popupContent.append(
     title,
     closeButton,
-    popupForm,
-    // goal == 'changeClient' ? createInputContact(client) : '',
-    addContactButton,
+    goal !== 'removeClient' ? popupForm : '',
+    goal === 'changeClient' ? createContactsInfo(client) : '',
+    goal !== 'removeClient' ? addContactButton : '',
+    goal === 'removeClient'
+      ? el(
+          'p',
+          { class: 'delete-question' },
+          'Вы действительно хотите удалить данного клиента?'
+        )
+      : '',
     actionButton,
     additionalButton
   );
@@ -59,16 +66,52 @@ export function openPopup(goal, client = {}) {
   closeButton.addEventListener('click', () => closePopup());
   actionButton.addEventListener('click', () => closePopup());
   additionalButton.addEventListener('click', () => closePopup());
-
   addContactButton.addEventListener('click', () => {
     const inputContacts = createInputContact();
     popupForm.append(inputContacts.inputContact);
-    // inputContacts.select.value = 3;
-    // inputContacts.input.value = 'dfdfdf';
-    console.log(createInputContact());
   });
 
   return popup;
+}
+
+function createContactsInfo({ contacts }) {
+  const contactsBlock = document.createElement('div');
+
+  for (let [key, value] of Object.entries(contacts)) {
+    const inputContacts = createInputContact();
+
+    switch (key) {
+      case 'phone':
+        inputContacts.select.value = 1;
+        break;
+
+      case 'addPhone':
+        inputContacts.select.value = 2;
+        break;
+
+      case 'email':
+        inputContacts.select.value = 3;
+        break;
+
+      case 'vk':
+        inputContacts.select.value = 4;
+        break;
+
+      case 'fb':
+        inputContacts.select.value = 5;
+        break;
+
+      case 'twitter':
+        inputContacts.select.value = 6;
+        break;
+    }
+
+    inputContacts.input.value = value;
+
+    contactsBlock.append(inputContacts.inputContact);
+  }
+
+  return contactsBlock;
 }
 
 function closePopup() {
