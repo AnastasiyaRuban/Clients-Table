@@ -1,19 +1,20 @@
 import { el } from 'redom';
+import { createTable } from './createTable.js';
 import { openPopup } from './popup.js';
-import './style/header.scss';
+import './style/style.scss';
 
 function createSvg(id, height, width) {
   const svg = document.createElement('svg');
 
   svg.setAttribute('width', width);
   svg.setAttribute('height', height);
-  svg.innerHTML = `<use xlink:href="assets/sprites/InlineSprite.svg#${id}"></use>`;
+  svg.innerHTML = `<use xlink:href="#${id}"></use>`;
 
   return svg;
 }
 
-function createHeader() {
-  const headerBlock = document.createElement('div'),
+function createHeaderApp() {
+  const headerBlock = document.createElement('header'),
     logo = createSvg('logo', 50, 50),
     searchInput = document.createElement('input');
 
@@ -29,60 +30,33 @@ function createHeader() {
   };
 }
 
-function createTitle() {
-  const title = document.createElement('h1');
-
-  title.textContent = 'Клиенты';
-  title.classList.add('bodyApp-title', 'mb-5');
-
-  return title;
-}
-
 function createBodyApp() {
-  //возвращает bodyApp, table, addButton
-  const bodyApp = document.createElement('div'),
-    title = createTitle(),
+  //возвращает bodyApp, table, addClientButton
+  const bodyApp = document.createElement('main'),
+    title = createTitleApp(),
     table = createTable(),
-    addButton = createaddClientButton();
-  bodyApp.classList.add('bodyApp', 'd-flex', 'flex-column');
-  bodyApp.append(title, table.table, addButton);
+    addClientButton = createAddClientButton();
+
+  bodyApp.classList.add('clients', 'd-flex', 'flex-column');
+  bodyApp.append(title, table.table, addClientButton);
 
   return {
     bodyApp,
     table,
-    addButton,
+    addClientButton,
   };
 }
 
-function createTableHead() {
-  //  return tableHead
+function createTitleApp() {
+  const title = document.createElement('h1');
 
-  const head = `
-  <th scope="col"><button class="button-reset">ID</button></th>
-  <th scope="col"><button class="button-reset">Фамилия Имя Отчество</button></th>
-  <th scope="col"><button class="button-reset">Дата и время создания</button></th>
-  <th scope="col"><button class="button-reset">Последнее изменение</button></th>
-  <th scope="col">Контакты</th>
-  <th scope="col">Действия</th>`;
-  const tableHead = `<thead><tr>${head}</tr></thead>`;
+  title.textContent = 'Клиенты';
+  title.classList.add('clients__title', 'mb-5');
 
-  return tableHead;
+  return title;
 }
 
-function createTable() {
-  // return {table, tableBody};
-  const tableHead = createTableHead(),
-    table = document.createElement('table'),
-    tableBody = document.createElement('tbody');
-
-  tableBody.classList.add('table_body');
-  table.classList.add('table', 'mb-5');
-  table.innerHTML = `${tableHead}`;
-  table.append(tableBody);
-  return { table, tableBody };
-}
-
-function createaddClientButton() {
+function createAddClientButton() {
   //return button;
   const button = document.createElement('button');
 
@@ -114,7 +88,7 @@ export function createClientItem(client) {
 
 export function createContainer() {
   //return { container, bodyApp }
-  const header = createHeader(),
+  const header = createHeaderApp(),
     bodyApp = createBodyApp(),
     container = el('div', { class: 'container' }, [
       header.headerBlock,

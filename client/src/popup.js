@@ -8,7 +8,7 @@ export function openPopup(goal, client = {}) {
     actionButton = document.createElement('button'),
     additionalButton = document.createElement('button'),
     popupForm = createForm(client),
-    addContactButton = createButtonAddContact();
+    addContactButton = document.createElement('button');
 
   popup.classList.add(
     'popup',
@@ -17,15 +17,22 @@ export function openPopup(goal, client = {}) {
     'align-items-center'
   );
   popupContent.classList.add(
-    'popupContent',
+    'popup__сontent',
     'flex-column',
     'd-flex',
     'align-items-center'
   );
-  title.classList.add('titlePopup', 'title');
-  closeButton.classList.add('closeButtonPopup', 'button-reset');
-  actionButton.classList.add('actionButtonPopup', 'button-reset');
-  additionalButton.classList.add('additionalButtonPopup', 'button-reset');
+  title.classList.add('popup__title', 'title');
+  closeButton.classList.add('popup__close-btn', 'button-reset');
+  actionButton.classList.add('popup__action-btn', 'button-reset');
+  additionalButton.classList.add('popup__additional-btn', 'button-reset');
+  addContactButton.classList.add(
+    'popup__addContact-btn',
+    'button-reset',
+    'mb-5'
+  );
+
+  addContactButton.textContent = 'Добавить контакт';
 
   switch (goal) {
     case 'addClient':
@@ -43,11 +50,32 @@ export function openPopup(goal, client = {}) {
       actionButton.textContent = 'Удалить';
       additionalButton.textContent = 'Отмена';
       break;
+    default:
+      title.textContent = 'Что-то пошло не так...';
   }
+
+  // popupContent.append(title, closeButton);
+
+  // if (goal === 'removeClient') {
+  //   popupContent.append(
+  //     el(
+  //       'p',
+  //       { class: 'delete-question' },
+  //       'Вы действительно хотите удалить данного клиента?'
+  //     )
+  //   );
+  // } else if (goal === 'removeClient' || 'changeClient' || 'addClient') {
+  //   popupContent.append(actionButton, additionalButton);
+  // } else if (goal === 'changeClient' || 'addClient') {
+  //   popupContent.append(popupForm, addContactButton);
+  // } else if (goal === 'changeClient') {
+  //   popupContent.append(createContactsInfo(client));
+  // }
 
   popupContent.append(
     title,
     closeButton,
+    popupForm,
     goal !== 'removeClient' ? popupForm : '',
     goal === 'changeClient' ? createContactsInfo(client) : '',
     goal !== 'removeClient' ? addContactButton : '',
@@ -61,14 +89,15 @@ export function openPopup(goal, client = {}) {
     actionButton,
     additionalButton
   );
+
   popup.append(popupContent);
 
-  closeButton.addEventListener('click', () => closePopup());
-  actionButton.addEventListener('click', () => closePopup());
-  additionalButton.addEventListener('click', () => closePopup());
+  closeButton.addEventListener('click', closePopup);
+  actionButton.addEventListener('click', closePopup);
+  additionalButton.addEventListener('click', closePopup);
   addContactButton.addEventListener('click', () => {
     const inputContacts = createInputContact();
-    popupForm.append(inputContacts.inputContact);
+    popupForm.append(inputContacts.contactField);
   });
 
   return popup;
@@ -108,7 +137,7 @@ function createContactsInfo({ contacts }) {
 
     inputContacts.input.value = value;
 
-    contactsBlock.append(inputContacts.inputContact);
+    contactsBlock.append(inputContacts.contactField);
   }
 
   return contactsBlock;
@@ -185,21 +214,8 @@ function createForm(client = {}) {
       ),
     ]
   );
-  console.log(client);
 
   return form;
-}
-
-function createButtonAddContact() {
-  const button = el(
-    'button',
-    {
-      class: 'buttonAddContact button-reset mb-5',
-    },
-    'Добавить контакт'
-  );
-
-  return button;
 }
 
 function createInputContact() {
@@ -230,14 +246,15 @@ function createInputContact() {
     ''
   );
 
-  const inputContact = el(
+  const contactField = el(
     'div',
     { class: 'input-group input-reset inputContactsGroup mb-3' },
     [select, input]
   );
 
-  inputContact.addEventListener('click', () => {
+  contactField.addEventListener('click', () => {
     console.log(document.querySelector('select').value);
   });
-  return { inputContact, select, input };
+
+  return { contactField, select, input };
 }
