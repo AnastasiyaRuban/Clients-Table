@@ -1,21 +1,25 @@
 import { el } from 'redom';
+import { createClient, deleteClient, updateClient } from './api';
+import { createClientItem, createClientCells } from './createElements';
 
 export function openPopup(goal, client = {}) {
-  const popup = document.createElement('div'),
-    popupContent = document.createElement('div'),
+  const popup = document.querySelector('.popup');
+  const popupContent = createPopupContent(goal, client);
+  popup.replaceChildren();
+  popup.append(popupContent);
+  popup.setAttribute('data-goal', goal);
+  popup.classList.add('open');
+}
+
+function createPopupContent(goal, client) {
+  const popupContent = document.createElement('div'),
     title = document.createElement('h2'),
     closeButton = document.createElement('button'),
     actionButton = document.createElement('button'),
     additionalButton = document.createElement('button'),
-    popupForm = createForm(client),
+    popupForm = createForm(client, goal),
     addContactButton = document.createElement('button');
 
-  popup.classList.add(
-    'popup',
-    'd-flex',
-    'justify-content-center',
-    'align-items-center'
-  );
   popupContent.classList.add(
     'popup__сontent',
     'flex-column',
@@ -33,119 +37,123 @@ export function openPopup(goal, client = {}) {
   );
 
   addContactButton.textContent = 'Добавить контакт';
+  actionButton.setAttribute('type', 'submit');
+  additionalButton.setAttribute('type', 'button');
+  addContactButton.setAttribute('type', 'button');
+
+  popupContent.append(title, closeButton);
 
   switch (goal) {
     case 'addClient':
-      title.textContent = 'Новый клиент';
-      actionButton.textContent = 'Сохранить';
-      additionalButton.textContent = 'Отмена';
+      rewriteContent('Новый клиент', 'Сохранить', 'Отмена');
+      popupForm.append(addContactButton, actionButton, additionalButton);
+      popupContent.append(popupForm);
       break;
     case 'changeClient':
-      title.innerHTML = `Изменить данные <span>ID: ${client.id}</span>`;
-      actionButton.textContent = 'Сохранить';
-      additionalButton.textContent = 'Удалить клиента';
+      rewriteContent(
+        `Изменить данные <span>ID: ${client.id}</span>`,
+        'Сохранить',
+        'Удалить клиента'
+      );
+      popupForm.append(
+        createContactsInfo(client),
+        addContactButton,
+        actionButton,
+        additionalButton
+      );
+
+      popupContent.append(popupForm);
       break;
     case 'removeClient':
-      title.textContent = 'Удалить клиента';
-      actionButton.textContent = 'Удалить';
-      additionalButton.textContent = 'Отмена';
-      break;
-    default:
-      title.textContent = 'Что-то пошло не так...';
-  }
-
-  // popupContent.append(title, closeButton);
-
-  // if (goal === 'removeClient') {
-  //   popupContent.append(
-  //     el(
-  //       'p',
-  //       { class: 'delete-question' },
-  //       'Вы действительно хотите удалить данного клиента?'
-  //     )
-  //   );
-  // } else if (goal === 'removeClient' || 'changeClient' || 'addClient') {
-  //   popupContent.append(actionButton, additionalButton);
-  // } else if (goal === 'changeClient' || 'addClient') {
-  //   popupContent.append(popupForm, addContactButton);
-  // } else if (goal === 'changeClient') {
-  //   popupContent.append(createContactsInfo(client));
-  // }
-
-  popupContent.append(
-    title,
-    closeButton,
-    popupForm,
-    goal !== 'removeClient' ? popupForm : '',
-    goal === 'changeClient' ? createContactsInfo(client) : '',
-    goal !== 'removeClient' ? addContactButton : '',
-    goal === 'removeClient'
-      ? el(
+      rewriteContent('Удалить клиента', 'Удалить', 'Отмена');
+      popupForm.replaceChildren();
+      popupForm.append(
+        el(
           'p',
           { class: 'delete-question' },
           'Вы действительно хотите удалить данного клиента?'
-        )
-      : '',
-    actionButton,
-    additionalButton
-  );
+        ),
+        actionButton,
+        additionalButton
+      );
+      popupContent.append(popupForm);
+      break;
+    case 'error':
+      rewriteContent('Что-то пошло не так...</br>Попробуйте повторить позже');
+      break;
+  }
 
-  popup.append(popupContent);
+  function rewriteContent(
+    titles = '',
+    actionButtons = '',
+    additionalButtons = ''
+  ) {
+    title.innerHTML = titles;
+    actionButton.textContent = actionButtons;
+    additionalButton.textContent = additionalButtons;
+  }
 
   closeButton.addEventListener('click', closePopup);
-  actionButton.addEventListener('click', closePopup);
+
   additionalButton.addEventListener('click', closePopup);
   addContactButton.addEventListener('click', () => {
     const inputContacts = createInputContact();
     popupForm.append(inputContacts.contactField);
   });
 
-  return popup;
+  return popupContent;
 }
 
 function createContactsInfo({ contacts }) {
   const contactsBlock = document.createElement('div');
 
-  for (let [key, value] of Object.entries(contacts)) {
+  contacts.forEach((contact) => {
     const inputContacts = createInputContact();
+    const type = contact.type;
+    const value = contact.value;
 
-    switch (key) {
+    switch (type) {
       case 'phone':
-        inputContacts.select.value = 1;
+        inputContacts.select.value = 'phone';
         break;
 
       case 'addPhone':
-        inputContacts.select.value = 2;
+        inputContacts.select.value = 'addPhone';
         break;
 
       case 'email':
-        inputContacts.select.value = 3;
+        inputContacts.select.value = 'email';
         break;
 
       case 'vk':
-        inputContacts.select.value = 4;
+        inputContacts.select.value = 'vk';
         break;
 
       case 'fb':
-        inputContacts.select.value = 5;
+        inputContacts.select.value = 'fb';
         break;
 
       case 'twitter':
-        inputContacts.select.value = 6;
+        inputContacts.select.value = 'twitter';
         break;
     }
-
     inputContacts.input.value = value;
 
     contactsBlock.append(inputContacts.contactField);
-  }
+  });
 
   return contactsBlock;
 }
 
 function closePopup() {
   const popup = document.querySelector('.popup');
-  popup.remove();
+  const contactsGroups = popup.querySelectorAll('.inputContactsGroup');
+  const form = popup.querySelector('.form');
+  popup.classList.remove('open');
+  contactsGroups.forEach((contact) => contact.remove());
+  if (form) {
+    form.reset();
+  }
 }
 
 function createInputGroup(label, id, type, classGroup, inputValue = '') {
@@ -162,10 +170,11 @@ function createInputGroup(label, id, type, classGroup, inputValue = '') {
   const input = el(
     'input',
     {
-      class: `form-control input-reset input-${id}`,
       id: id,
+      class: `form-control input-reset input-${id}`,
+      name: id,
       type: type,
-      required: true,
+      required: id == 'lastName' ? false : true,
       value: inputValue,
     },
     ''
@@ -189,11 +198,11 @@ function createInputGroup(label, id, type, classGroup, inputValue = '') {
   return inputGroup;
 }
 
-function createForm(client = {}) {
+function createForm(client = {}, goal) {
   const form = el(
     'form',
     {
-      class: 'd-flex flex-column',
+      class: 'd-flex flex-column form',
       style: 'width: 100%',
     },
     [
@@ -207,15 +216,77 @@ function createForm(client = {}) {
       createInputGroup('Имя', 'name', 'text', 'groupName', client.name),
       createInputGroup(
         'Отчество',
-        'patronymic',
+        'lastName',
         'text',
-        'groupPatronymic',
-        client.patronymic
+        'groupLastName',
+        client.lastName
       ),
     ]
   );
 
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    let clientData = {};
+    if (goal != 'removeClient') {
+      const formData = new FormData(e.target);
+      const name = formData.get('name').trim();
+      const surname = formData.get('surname').trim();
+      const lastName = formData.get('lastName').trim();
+      let contacts = [];
+      const contactsForm = e.target.querySelectorAll('.inputContactsGroup');
+      clientData = {
+        name,
+        surname,
+        lastName,
+        contacts,
+      };
+
+      contactsForm.forEach((contact) => {
+        const typeContact = contact.querySelector('select').value;
+        const valueContact = contact.querySelector('input').value.trim();
+
+        contacts.push({ type: typeContact, value: valueContact });
+      });
+    }
+    if (goal == 'addClient') {
+      await addClient(clientData);
+    } else if (goal == 'changeClient') {
+      console.log(clientData);
+      await changeClient(clientData, client.id);
+    } else if (goal == 'removeClient') {
+      removeClient(client.id);
+    }
+
+    closePopup();
+  });
+
   return form;
+}
+
+async function addClient(data) {
+  const client = await createClient(data);
+  const clientItem = createClientItem(client);
+  const clientsTable = document.querySelector('.table_body');
+
+  clientsTable.append(clientItem);
+}
+async function changeClient(data, id) {
+  const client = await updateClient(id, data);
+  const clientСells = createClientCells(client);
+  const clientRow = document.getElementById(id);
+
+  clientRow.replaceChildren();
+  for (let value of Object.values(clientСells)) {
+    clientRow.append(value);
+  }
+}
+
+function removeClient(id) {
+  console.log(id);
+  deleteClient(id);
+
+  const clientsRow = document.getElementById(`${id}`);
+  clientsRow.remove();
 }
 
 function createInputContact() {
@@ -226,12 +297,12 @@ function createInputContact() {
       'aria-label': 'Default select example',
     },
     [
-      el('option', { value: 1 }, 'Телефон'),
-      el('option', { value: 2 }, 'Доп. телефон'),
-      el('option', { value: 3 }, 'Email'),
-      el('option', { value: 4 }, 'Vk'),
-      el('option', { value: 5 }, 'Facebook'),
-      el('option', { value: 6 }, 'Twitter'),
+      el('option', { value: 'phone' }, 'Телефон'),
+      el('option', { value: 'addPhone' }, 'Доп. телефон'),
+      el('option', { value: 'email' }, 'Email'),
+      el('option', { value: 'vk' }, 'Vk'),
+      el('option', { value: 'fb' }, 'Facebook'),
+      el('option', { value: 'twitter' }, 'Twitter'),
     ]
   );
 
@@ -251,10 +322,6 @@ function createInputContact() {
     { class: 'input-group input-reset inputContactsGroup mb-3' },
     [select, input]
   );
-
-  contactField.addEventListener('click', () => {
-    console.log(document.querySelector('select').value);
-  });
 
   return { contactField, select, input };
 }

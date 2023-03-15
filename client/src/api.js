@@ -1,15 +1,16 @@
 export async function getClientsList() {
   const response = await fetch(`http://localhost:3000/api/clients`);
-  return await response.json();
+
+  if (response.status === 200 || response.status === 201) {
+    return await response.json();
+  }
+  throw new Error('Не удалось загрузить список клиентов');
 }
 
-export async function createClient(name) {
+export async function createClient(client) {
   const response = await fetch(`http://localhost:3000/api/clients`, {
     method: 'POST',
-    body: JSON.stringify({
-      id: 0,
-      name,
-    }),
+    body: JSON.stringify(client),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -18,23 +19,23 @@ export async function createClient(name) {
   return response.json();
 }
 
-//   export function switchTodoItemDone({ todoItem }) {
-//     todoItem.done = !todoItem.done;
-//     fetch(`http://localhost:3000/api/todos/${todoItem.id}`, {
-//       method: 'PATCH',
-//       body: JSON.stringify({ done: todoItem.done }),
-//       headers: {
-//         'Content-Type': 'application/json',
-//       }
-//     })
-//   }
+export async function updateClient(clientId, data) {
+  const response = await fetch(
+    `http://localhost:3000/api/clients/${clientId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 
-//   export function deleteTodoItem({ element, todoItem }) {
-//     if (!confirm('Вы уверены?')) {
-//       return;
-//     }
-//     element.remove();
-//     fetch(`http://localhost:3000/api/todos/${todoItem.id}`, {
-//       method: 'DELETE',
-//     })
-//   }
+  return response.json();
+}
+
+export function deleteClient(clientId) {
+  fetch(`http://localhost:3000/api/clients/${clientId}`, {
+    method: 'DELETE',
+  });
+}

@@ -5,12 +5,19 @@ import 'bootstrap';
 
 (async function createApp() {
   const container = createContainer(),
-    tableBody = container.bodyApp.table.tableBody,
-    clientsList = await getClientsList();
+    tableBody = container.bodyApp.table.tableBody;
 
   document.body.append(container.container);
 
-  clientsList.forEach((client) => {
-    tableBody.append(createClientItem(client));
-  });
+  try {
+    const clientsList = await getClientsList();
+    clientsList.forEach((client) => {
+      tableBody.append(createClientItem(client));
+    });
+  } catch (error) {
+    openPopup('error');
+    console.log(error);
+  } finally {
+    container.loader.style.display = 'none';
+  }
 })();

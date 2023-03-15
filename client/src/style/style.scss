@@ -58,12 +58,10 @@ body {
   margin: 0;
   font-family: "OpenSansRegular", sans-serif;
   font-weight: 400;
-  overflow-x: hidden;
 }
 
 .container {
   margin: 0 auto;
-  /* padding: 0 11px 0 12px; */
   max-width: 1366px;
 }
 
@@ -142,7 +140,7 @@ body {
 }
 
 .clients {
-  padding: 40px 90px;
+  padding: 40px 78px;
 }
 
 .clients__title {
@@ -169,8 +167,9 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
   background-color: rgba(51, 51, 51, 0.6);
 
   &__сontent {
@@ -212,24 +211,36 @@ body {
   }
 
   &__action-btn {
+    margin: 0 auto;
     padding: 12px 35px;
     margin-bottom: 5px;
     width: fit-content;
+    order: 2;
     background-color: var(--firm);
     color: #fff;
     font-family: "OpenSansSemiBold";
   }
 
   &__additional-btn {
+    margin: 0 auto;
+    width: fit-content;
+    order: 3;
     font-size: 12px;
     border-bottom: 1px solid var(--black);
     line-height: 10px;
   }
 
   &__addContact-btn {
+    order: 1;
     font-family: "OpenSansSemiBold";
     font-size: 14px;
   }
+}
+
+.popup.open {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
 
 .inputContactsGroup {
@@ -265,7 +276,7 @@ body {
   font-size: 14px;
 }
 
-.input-patronimic,
+.input-lastName,
 .input-name,
 .input-surname {
   height: 0;
@@ -273,7 +284,7 @@ body {
 
 .label-surname,
 .label-name,
-.label-patronimic {
+.label-lastName {
   font-size: 14px;
   color: var(--txt_grey);
   border-bottom: 1px solid rgba(200, 197, 209, 0.5);
@@ -292,4 +303,90 @@ body {
 
 .button-change {
   margin-right: 30px;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  background-color: #fff;
+}
+
+.contact-tooltip {
+  position: absolute;
+  padding: 7px 14px;
+  width: 133px;
+  left: calc(50% - 66px);
+  bottom: 25px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  color: #fff;
+  background-color: #333;
+  opacity: 0;
+  transition: all 0.4s ease-in;
+}
+
+.btn-tooltip::before {
+  content: "";
+  position: absolute;
+  left: calc(50% - 4px);
+  bottom: 13px;
+  border: 4px solid transparent;
+  border-top: 8px solid #333;
+  opacity: 0;
+  transition: all 0.4s ease-in;
+}
+
+.btn-tooltip {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  background-color: #9873ff;
+}
+
+.btn-tooltip:not(:last-child) {
+  margin-right: 7px;
+}
+
+.btn-tooltip:hover .contact-tooltip,
+.btn-tooltip:hover::before {
+  opacity: 1;
+}
+
+.action-button {
+  gap: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.table {
+  &__head th,
+  &__head-btn {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #b0b0b0;
+  }
+
+  &__head-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__head-btn.active {
+    color: var(--firm);
+  }
+
+  &__head-btn:not(.active) svg {
+    transform: rotate(180deg);
+  }
 }
