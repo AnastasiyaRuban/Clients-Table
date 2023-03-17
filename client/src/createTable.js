@@ -2,7 +2,6 @@ import { getIcon } from './svgIcons';
 import { getClientsList } from './api.js';
 
 export function createTable() {
-  // return {table, tableBody};
   const tableHead = createTableHead(),
     table = document.createElement('table'),
     tableBody = document.createElement('tbody');
@@ -62,12 +61,29 @@ function ceateSortButton(typeSort, text) {
   btn.innerHTML += text;
   btn.innerHTML += arrowTopIcon;
   btn.setAttribute('data-sort', typeSort);
+  btn.dataset.direction = 'descending';
 
   if (typeSort == 'id') {
     btn.classList.add('active');
+    btn.dataset.direction = 'ascending';
   }
 
-  btn.addEventListener('click', (e) => sortTable(e.target.dataset.sort));
+  btn.addEventListener('click', (e) => {
+    if (e.target.classList.contains('active')) {
+      if (e.target.dataset.direction == 'ascending') {
+        e.target.dataset.direction = 'descending';
+      } else if (e.target.dataset.direction == 'descending') {
+        e.target.dataset.direction = 'ascending';
+      }
+    } else {
+      const sortBtns = document.querySelectorAll('.table__head-btn');
+      sortBtns.forEach((btn) => btn.classList.remove('active'));
+      e.target.classList.add('active');
+      e.target.dataset.direction = 'ascending';
+    }
+
+    sortTable(e.target.dataset.sort);
+  });
   return btn;
 }
 

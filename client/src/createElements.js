@@ -3,21 +3,9 @@ import { createTable } from './createTable.js';
 import { openPopup } from './popup.js';
 import './style/style.scss';
 import { getIcon } from './svgIcons.js';
-// import sprite from './assets/InlineSprite.svg';
-
-// function createSvg(id, height, width) {
-//   const svg = document.createElement('svg');
-
-//   svg.setAttribute('width', width);
-//   svg.setAttribute('height', height);
-//   svg.innerHTML = `<use xlink:href=${sprite}#${id}></use>`;
-
-//   return svg;
-// }
 
 function createHeaderApp() {
   const headerBlock = document.createElement('header'),
-    // logo = createSvg('logo', 50, 50),
     logo = getIcon('logo'),
     searchInput = document.createElement('input');
 
@@ -35,7 +23,6 @@ function createHeaderApp() {
 }
 
 function createBodyApp() {
-  //возвращает bodyApp, table, addClientButton
   const bodyApp = document.createElement('main'),
     title = createTitleApp(),
     table = createTable(),
@@ -61,11 +48,11 @@ function createTitleApp() {
 }
 
 function createAddClientButton() {
-  //return button;
   const button = document.createElement('button');
 
   button.classList.add('button-reset', 'btn', 'addClientButton');
-  button.innerHTML = `Добавить клиента`;
+  button.innerHTML += getIcon('user');
+  button.innerHTML += `Добавить клиента`;
 
   button.addEventListener('click', () => {
     openPopup('addClient');
@@ -95,24 +82,50 @@ export function createClientCells(client) {
     createDate = el('th', getClientsDate(client.createdAt, 'create')),
     updateDate = el('th', getClientsDate(client.updatedAt, 'update')),
     contacts = el('th', contactsCell),
-    buttons = el('th', [actionButton.changeButton, actionButton.deleteButton]);
+    buttons = el('th', { class: 'cell-actions' }, [
+      actionButton.changeButton,
+      actionButton.deleteButton,
+    ]);
 
   return { idClient, fullName, createDate, updateDate, contacts, buttons };
 }
 
 function ctreateContactsCell(client) {
   const contacts = client.contacts;
+  const type = {
+    fb: 'Facebook',
+    vk: 'Vkontakte',
+    phone: 'Телефон',
+    addPhone: 'Доп. телефон',
+    twitter: 'Twitter',
+    mail: 'Email',
+  };
   let cell = [];
 
   if (contacts.length) {
     contacts.forEach((contact) => {
       const btn = document.createElement('button');
-      const tooltip = document.createElement('span');
+      let icon = '';
+      const tooltip = document.createElement('div');
+      console.log(type[contact.type]);
+      if (
+        contact.type == 'fb' ||
+        contact.type == 'vk' ||
+        contact.type == 'mail' ||
+        contact.type == 'phone'
+      ) {
+        icon = getIcon(contact.type);
+      } else {
+        icon = getIcon('twitter');
+      }
 
+      btn.innerHTML += icon;
       btn.classList.add('btn-tooltip', 'button-reset');
       tooltip.classList.add('contact-tooltip');
 
-      tooltip.textContent = contact.value;
+      tooltip.innerHTML = `<span class="contact-type">${
+        type[contact.type]
+      }: </span><span class="contact-value">${contact.value}</span>`;
       btn.append(tooltip);
 
       cell.push(btn);

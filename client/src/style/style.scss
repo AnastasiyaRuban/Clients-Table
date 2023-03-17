@@ -114,6 +114,7 @@ body {
   padding: 20px;
   display: flex;
   align-items: center;
+  gap: 53px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -320,7 +321,7 @@ body {
 
 .contact-tooltip {
   position: absolute;
-  padding: 7px 14px;
+  padding: 7px;
   width: 133px;
   left: calc(50% - 66px);
   bottom: 25px;
@@ -331,17 +332,19 @@ body {
   color: #fff;
   background-color: #333;
   opacity: 0;
+  visibility: hidden;
   transition: all 0.4s ease-in;
 }
 
-.btn-tooltip::before {
+.btn-tooltip::after {
   content: "";
   position: absolute;
   left: calc(50% - 4px);
-  bottom: 13px;
+  bottom: 14px;
   border: 4px solid transparent;
   border-top: 8px solid #333;
   opacity: 0;
+  visibility: hidden;
   transition: all 0.4s ease-in;
 }
 
@@ -349,16 +352,21 @@ body {
   position: relative;
   width: 16px;
   height: 16px;
-  background-color: #9873ff;
+}
+
+.btn-tooltip svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .btn-tooltip:not(:last-child) {
   margin-right: 7px;
 }
-
-.btn-tooltip:hover .contact-tooltip,
-.btn-tooltip:hover::before {
+.btn-tooltip:hover::after,
+.btn-tooltip:hover .contact-tooltip {
   opacity: 1;
+  visibility: visible;
 }
 
 .action-button {
@@ -386,7 +394,30 @@ body {
     color: var(--firm);
   }
 
-  &__head-btn:not(.active) svg {
+  &__head-btn[data-direction="descending"] svg {
     transform: rotate(180deg);
   }
+  &__head-btn[data-sort="surname"][data-direction="ascending"]:after {
+    content: "Я-А";
+    color: var(--firm);
+  }
+  &__head-btn[data-sort="surname"][data-direction="descending"]:after {
+    content: "А-Я";
+    color: var(--firm);
+  }
+}
+
+.cell-actions {
+  display: flex;
+}
+
+.addClientButton {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.contact-value {
+  color: var(--firm);
+  font-weight: 600;
 }
