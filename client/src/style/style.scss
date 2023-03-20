@@ -176,8 +176,19 @@ body {
   &__сontent {
     position: relative;
     min-width: 450px;
-    background-color: #fff;
+    min-height: 215px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
     padding: 24px 30px 30px;
+  }
+
+  &__text {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    color: var(--black);
   }
 
   &__title {
@@ -271,6 +282,7 @@ body {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid var(--txt_grey);
+  border-right: none;
   color: var(--black);
   border-left: none;
   color: #b0b0b0;
@@ -317,6 +329,7 @@ body {
   align-items: center;
   gap: 30px;
   background-color: #fff;
+  opacity: 0.8;
 }
 
 .contact-tooltip {
@@ -420,4 +433,35 @@ body {
 .contact-value {
   color: var(--firm);
   font-weight: 600;
+}
+
+.removeContactBtn {
+  width: 27px;
+  height: 100%;
+  border: 1px solid #c8c5d1;
+  border-left: none;
+}
+
+.removeContactBtn svg {
+  visibility: hidden;
+}
+.removeContactBtn.active {
+  border-left: 1px solid #c8c5d1;
+}
+.removeContactBtn.active svg {
+  visibility: visible;
+}
+
+.form-select {
+  height: 100%;
+}
+
+.text-primary {
+  color: var(--firm) !important;
+}
+
+.spinner-border {
+  width: 72px;
+  height: 72px;
+  border-width: 8px;
 }

@@ -1,5 +1,5 @@
 export async function getClientsList() {
-  const response = await fetch(`http://localhost:3000/api/clients`);
+  const response = await fetch(`http://localhost:3000/api/clents`);
 
   if (response.status === 200 || response.status === 201) {
     return await response.json();
@@ -16,7 +16,14 @@ export async function createClient(client) {
     },
   });
 
-  return response.json();
+  if (response.status === 200 || response.status === 201) {
+    return await response.json();
+  } else {
+    const errors = await response.json();
+    console.log(errors.errors);
+  }
+  // throw new Error();
+  // return await response.json();
 }
 
 export async function updateClient(clientId, data) {

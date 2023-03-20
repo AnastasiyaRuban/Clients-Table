@@ -1,13 +1,13 @@
 import { createContainer, createClientItem } from './createElements.js';
-import { getClientsList, createClient } from './api.js';
-import { openPopup } from './popup.js';
+import { getClientsList } from './api.js';
+import { openPopupError } from './popup.js';
 import 'bootstrap';
 
 (async function createApp() {
-  const container = createContainer(),
-    tableBody = container.bodyApp.table.tableBody;
+  const containerApp = createContainer(),
+    tableBody = containerApp.bodyApp.table.tableBody;
 
-  document.body.append(container.container);
+  document.body.append(containerApp.container);
 
   try {
     const clientsList = await getClientsList();
@@ -15,9 +15,9 @@ import 'bootstrap';
       tableBody.append(createClientItem(client));
     });
   } catch (error) {
-    openPopup('error');
-    console.log(error);
+    // console.log(error.message);
+    openPopupError(error.message);
   } finally {
-    container.loader.style.display = 'none';
+    containerApp.loader.style.display = 'none';
   }
 })();

@@ -1,5 +1,4 @@
 import { getIcon } from './svgIcons';
-import { getClientsList } from './api.js';
 
 export function createTable() {
   const tableHead = createTableHead(),
@@ -82,21 +81,23 @@ function ceateSortButton(typeSort, text) {
       e.target.dataset.direction = 'ascending';
     }
 
-    sortTable(e.target.dataset.sort);
+    sortTable(e.target.dataset.sort, e.target.dataset.direction);
   });
   return btn;
 }
 
-async function sortTable(typeSort) {
+function sortTable(typeSort, direction = 'ascending') {
   const tableBody = document.querySelector('.table_body');
-  tableBody.replaceChildren();
-
-  const clientsList = await getClientsList();
-  const sortClientsList = clientsList.sort(sortByField(typeSort));
-
-  console.log(sortClientsList);
+  const rowsTable = Array.from(tableBody.querySelectorAll('tr'));
+  const sortedRowsTable = rowsTable.sort(sortByField(typeSort, direction));
+  sortedRowsTable.forEach((row) => {
+    tableBody.append(row);
+  });
 }
 
-function sortByField(field) {
-  return (a, b) => (a[field] > b[field] ? 1 : -1);
+function sortByField(field, direction) {
+  if (direction == 'ascending') {
+    return (a, b) => (a.dataset[field] > b.dataset[field] ? 1 : -1);
+  }
+  return (a, b) => (a.dataset[field] < b.dataset[field] ? 1 : -1);
 }

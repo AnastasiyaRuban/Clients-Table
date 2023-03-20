@@ -1,6 +1,7 @@
 import { el } from 'redom';
 import { createClient, deleteClient, updateClient } from './api';
 import { createClientItem, createClientCells } from './createElements';
+import { getIcon } from './svgIcons';
 
 export function openPopup(goal, client = {}) {
   const popup = document.querySelector('.popup');
@@ -8,6 +9,11 @@ export function openPopup(goal, client = {}) {
   popup.replaceChildren();
   popup.append(popupContent);
   popup.setAttribute('data-goal', goal);
+  popup.classList.add('open');
+}
+export function openPopupError(message) {
+  const popup = document.querySelector(`[data-type="error"]`);
+  popup.querySelector('p').textContent = message;
   popup.classList.add('open');
 }
 
@@ -145,7 +151,7 @@ function createContactsInfo({ contacts }) {
   return contactsBlock;
 }
 
-function closePopup() {
+export function closePopup() {
   const popup = document.querySelector('.popup');
   const contactsGroups = popup.querySelectorAll('.inputContactsGroup');
   const form = popup.querySelector('.form');
@@ -249,7 +255,8 @@ function createForm(client = {}, goal) {
       });
     }
     if (goal == 'addClient') {
-      await addClient(clientData);
+      const foo = await addClient(clientData);
+      console.log(foo);
     } else if (goal == 'changeClient') {
       console.log(clientData);
       await changeClient(clientData, client.id);
@@ -264,16 +271,21 @@ function createForm(client = {}, goal) {
 }
 
 async function addClient(data) {
-  const client = await createClient(data);
-  const clientItem = createClientItem(client);
-  const clientsTable = document.querySelector('.table_body');
-
-  clientsTable.append(clientItem);
+  try {
+    const client = await createClient(data);
+    console.log(client.errors);
+    const clientItem = createClientItem(client);
+    const clientsTable = document.querySelector('.table_body');
+    clientsTable.append(clientItem);
+  } catch (error) {
+    // return error;
+  }
 }
+
 async function changeClient(data, id) {
   const client = await updateClient(id, data);
   const clientСells = createClientCells(client);
-  const clientRow = document.getElementById(id);
+  const clientRow = document.querySelector(`[data-id="${id}"]`);
 
   clientRow.replaceChildren();
   for (let value of Object.values(clientСells)) {
@@ -282,14 +294,17 @@ async function changeClient(data, id) {
 }
 
 function removeClient(id) {
-  console.log(id);
   deleteClient(id);
 
-  const clientsRow = document.getElementById(`${id}`);
+  const clientsRow = document.querySelector(`[data-id="${id}"]`);
   clientsRow.remove();
 }
 
 function createInputContact() {
+  const contactField = document.createElement('div');
+  const removeContactBtn = document.createElement('button');
+  const removeIcon = getIcon('cancel');
+
   const select = el(
     'select',
     {
@@ -317,11 +332,28 @@ function createInputContact() {
     ''
   );
 
-  const contactField = el(
-    'div',
-    { class: 'input-group input-reset inputContactsGroup mb-3' },
-    [select, input]
+  contactField.classList.add(
+    'input-group',
+    'input-reset',
+    'inputContactsGroup',
+    'mb-3'
   );
+  removeContactBtn.innerHTML += removeIcon;
+
+  removeContactBtn.classList.add('button-reset', 'removeContactBtn');
+  contactField.append(select, input, removeContactBtn);
+
+  removeContactBtn.addEventListener('click', (e) => {
+    removeContactBtn.parentNode.remove();
+  });
+
+  input.addEventListener('input', (e) => {
+    if (input.value.trim()) {
+      removeContactBtn.classList.add('active');
+    } else {
+      removeContactBtn.classList.remove('active');
+    }
+  });
 
   return { contactField, select, input };
 }

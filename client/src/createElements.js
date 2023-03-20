@@ -1,6 +1,6 @@
 import { el } from 'redom';
 import { createTable } from './createTable.js';
-import { openPopup } from './popup.js';
+import { openPopup, closePopup } from './popup.js';
 import './style/style.scss';
 import { getIcon } from './svgIcons.js';
 
@@ -63,7 +63,7 @@ function createAddClientButton() {
 
 export function createClientItem(client) {
   const cells = createClientCells(client);
-  const rowTable = el('tr', { id: client.id }, [
+  const rowTable = el('tr', [
     cells.idClient,
     cells.fullName,
     cells.createDate,
@@ -71,6 +71,13 @@ export function createClientItem(client) {
     cells.contacts,
     cells.buttons,
   ]);
+
+  rowTable.dataset.id = client.id;
+  rowTable.dataset.fullName = `${client.surname} ${client.name} ${client.lastName}`;
+  rowTable.dataset.surname = client.surname;
+  rowTable.dataset.updatedAt = client.updatedAt;
+  rowTable.dataset.createdAt = client.createdAt;
+
   return rowTable;
 }
 
@@ -98,16 +105,15 @@ function ctreateContactsCell(client) {
     phone: 'Телефон',
     addPhone: 'Доп. телефон',
     twitter: 'Twitter',
-    mail: 'Email',
+    email: 'Email',
   };
   let cell = [];
 
-  if (contacts.length) {
+  if (contacts) {
     contacts.forEach((contact) => {
       const btn = document.createElement('button');
       let icon = '';
       const tooltip = document.createElement('div');
-      console.log(type[contact.type]);
       if (
         contact.type == 'fb' ||
         contact.type == 'vk' ||
@@ -162,18 +168,31 @@ function getClientsDate(date, action) {
 }
 
 export function createContainer() {
-  //return { container, bodyApp }
   const header = createHeaderApp(),
     bodyApp = createBodyApp(),
     loader = createLoader(),
-    popup = createPopup(),
+    popupError = createPopupError(),
+    popupRemoveClient = createPopup('removeClient'),
+    popupAddClient = createPopup('addClient'),
+    popupUpdateClient = createPopup('updateClient'),
     container = el('div', { class: 'container' }, [
       header.headerBlock,
       bodyApp.bodyApp,
       loader,
-      popup,
+      popupError,
+      popupRemoveClient,
+      popupAddClient,
+      popupUpdateClient,
     ]);
-  return { container, bodyApp, loader, popup };
+  return {
+    container,
+    bodyApp,
+    loader,
+    popupError,
+    popupRemoveClient,
+    popupAddClient,
+    popupUpdateClient,
+  };
 }
 
 function createActionButton(client) {
@@ -188,7 +207,7 @@ function createActionButton(client) {
 
   deleteButton.classList.add('action-button', 'button-reset', 'button-delete');
   deleteButton.innerHTML += cancelIcon;
-  deleteButton.innerHTML += 'Изменить';
+  deleteButton.innerHTML += 'Удалить';
 
   changeButton.addEventListener('click', () => {
     openPopup('changeClient', client);
@@ -207,15 +226,9 @@ function createActionButton(client) {
 function createLoader() {
   const loader = document.createElement('div');
   loader.innerHTML = `
-    <div class="spinner-grow" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div class="spinner-grow" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div class="spinner-grow" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+    <div class="spinner-border text-primary" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
 `;
   loader.classList.add(
     'loader',
@@ -226,7 +239,24 @@ function createLoader() {
   return loader;
 }
 
-function createPopup() {
+function createPopupError() {
+  const popup = createPopup('error');
+  const popupContentBlock = document.createElement('div');
+  const popupContent = document.createElement('p');
+  const closeButton = document.createElement('button');
+
+  closeButton.classList.add('popup__close-btn', 'button-reset');
+  popupContentBlock.classList.add('popup__сontent');
+  popupContent.classList.add('popup__text');
+
+  closeButton.addEventListener('click', closePopup);
+
+  popupContentBlock.append(popupContent, closeButton);
+  popup.append(popupContentBlock);
+
+  return popup;
+}
+function createPopup(type) {
   const popup = document.createElement('div');
   popup.classList.add(
     'popup',
@@ -234,6 +264,7 @@ function createPopup() {
     'justify-content-center',
     'align-items-center'
   );
+  popup.dataset.type = type;
 
   return popup;
 }
