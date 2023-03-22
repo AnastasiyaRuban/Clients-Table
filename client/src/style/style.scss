@@ -1,4 +1,5 @@
 @import "~bootstrap/scss/bootstrap";
+
 :root {
   --grey-light: #e7e5eb;
   --txt_grey: #b0b0b0;
@@ -166,6 +167,9 @@ body {
 
 .popup {
   position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 0;
   left: 0;
   width: 0;
@@ -177,11 +181,11 @@ body {
     position: relative;
     min-width: 450px;
     min-height: 215px;
+    padding: 27px 0 22px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: white;
-    padding: 24px 30px 30px;
   }
 
   &__text {
@@ -191,61 +195,30 @@ body {
     color: var(--black);
   }
 
-  &__title {
-    width: 100%;
-    margin-bottom: 16px;
-    color: var(--black);
-    font-size: 18px;
-    font-family: "OpenSansBold";
-  }
-
   &__close-btn {
     position: absolute;
     right: 15px;
     top: 15px;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
 
     &::after,
     &::before {
       position: absolute;
       content: "";
+      top: 0;
       width: 2px;
-      height: 15px;
+      height: 25px;
       background-color: var(--txt_grey);
     }
+
     &::after {
       transform: rotate(45deg);
     }
+
     &::before {
       transform: rotate(-45deg);
     }
-  }
-
-  &__action-btn {
-    margin: 0 auto;
-    padding: 12px 35px;
-    margin-bottom: 5px;
-    width: fit-content;
-    order: 2;
-    background-color: var(--firm);
-    color: #fff;
-    font-family: "OpenSansSemiBold";
-  }
-
-  &__additional-btn {
-    margin: 0 auto;
-    width: fit-content;
-    order: 3;
-    font-size: 12px;
-    border-bottom: 1px solid var(--black);
-    line-height: 10px;
-  }
-
-  &__addContact-btn {
-    order: 1;
-    font-family: "OpenSansSemiBold";
-    font-size: 14px;
   }
 }
 
@@ -287,27 +260,6 @@ body {
   border-left: none;
   color: #b0b0b0;
   font-size: 14px;
-}
-
-.input-lastName,
-.input-name,
-.input-surname {
-  height: 0;
-}
-
-.label-surname,
-.label-name,
-.label-lastName {
-  font-size: 14px;
-  color: var(--txt_grey);
-  border-bottom: 1px solid rgba(200, 197, 209, 0.5);
-}
-
-.label-surname::after,
-.label-name::after {
-  content: "*";
-  color: var(--firm);
-  font-family: "OpenSansSemiBold";
 }
 
 .action-button:hover {
@@ -376,6 +328,7 @@ body {
 .btn-tooltip:not(:last-child) {
   margin-right: 7px;
 }
+
 .btn-tooltip:hover::after,
 .btn-tooltip:hover .contact-tooltip {
   opacity: 1;
@@ -410,10 +363,12 @@ body {
   &__head-btn[data-direction="descending"] svg {
     transform: rotate(180deg);
   }
+
   &__head-btn[data-sort="surname"][data-direction="ascending"]:after {
     content: "Я-А";
     color: var(--firm);
   }
+
   &__head-btn[data-sort="surname"][data-direction="descending"]:after {
     content: "А-Я";
     color: var(--firm);
@@ -438,18 +393,8 @@ body {
 .removeContactBtn {
   width: 27px;
   height: 100%;
-  border: 1px solid #c8c5d1;
-  border-left: none;
-}
-
-.removeContactBtn svg {
-  visibility: hidden;
-}
-.removeContactBtn.active {
-  border-left: 1px solid #c8c5d1;
-}
-.removeContactBtn.active svg {
-  visibility: visible;
+  border: 1px solid var(--txt_grey);
+  // border-left: none;
 }
 
 .form-select {
@@ -464,4 +409,162 @@ body {
   width: 72px;
   height: 72px;
   border-width: 8px;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__title {
+    width: 100%;
+    margin-bottom: 32px;
+    padding: 0 30px;
+    color: var(--black);
+    font-size: 18px;
+    font-family: "OpenSansBold";
+  }
+
+  &__inputs {
+    padding: 0 30px;
+    margin-bottom: 26px;
+  }
+
+  &__action-btn {
+    margin: 0 auto;
+    padding: 12px 35px;
+    margin-bottom: 5px;
+    width: fit-content;
+    background-color: var(--firm);
+    color: #fff;
+    font-family: "OpenSansSemiBold";
+  }
+
+  &__additional-btn {
+    margin: 0 auto;
+    width: fit-content;
+    font-size: 12px;
+    border-bottom: 1px solid var(--black);
+    line-height: 10px;
+  }
+
+  &__addContact-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-family: "OpenSansSemiBold";
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+  }
+
+  &__inputBlock {
+    position: relative;
+  }
+
+  &__inputBlock:not(:last-child) {
+    margin-bottom: 32px;
+  }
+
+  &__input {
+    width: 100%;
+    height: 25px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--black);
+    border-bottom: 1px solid rgba(200, 197, 209, 0.5);
+    background-color: transparent;
+  }
+
+  &__input:focus + label,
+  &__input:not(:placeholder-shown) + label {
+    bottom: 25px;
+    cursor: default;
+  }
+
+  &__label {
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    transition: 0.3s bottom linear;
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--txt_grey);
+    cursor: pointer;
+  }
+
+  &__label span {
+    color: var(--firm);
+    font-family: "OpenSansSemiBold";
+  }
+
+  &__contacts {
+    min-height: 35px;
+    width: 100%;
+    padding: 8px 30px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f3f6;
+  }
+
+  &__select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  &__dropdown-button {
+    position: relative;
+    width: 123px;
+    padding: 10px 12px;
+    border: 1px solid var(--grey);
+    text-align: left;
+    background-color: var(--grey-light);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    font-family: "OpenSansRegular";
+  }
+
+  &__dropdown-list {
+    max-height: 0;
+    width: 123px;
+    overflow: hidden;
+    background-color: #f4f3f6;
+    border: 1px solid var(--grey);
+    border-top: none;
+    border-bottom: none;
+    padding-left: 12px;
+    padding-right: 12px;
+    transition: all 0.3s ease-in;
+  }
+
+  &__dropdown-item {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    font-family: "OpenSansRegular";
+    cursor: pointer;
+  }
+  &__dropdown-item:not(:last-child) {
+    margin-bottom: 9px;
+  }
+}
+
+.contacts {
+  &__inputs {
+    width: 100%;
+  }
+}
+
+.contacts:has(.inputContactsGroup) {
+  padding: 25px 30px;
 }

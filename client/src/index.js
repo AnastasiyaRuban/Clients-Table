@@ -1,7 +1,9 @@
-import { createContainer, createClientItem } from './createElements.js';
+import { createContainer } from './createContainer';
+import { createClientItem } from './createElements.js';
 import { getClientsList } from './api.js';
-import { openPopupError } from './popup.js';
-import 'bootstrap';
+import { openPopupError } from './popupActions.js';
+// import 'bootstrap';
+import './style/style.scss';
 
 (async function createApp() {
   const containerApp = createContainer(),
@@ -15,7 +17,6 @@ import 'bootstrap';
       tableBody.append(createClientItem(client));
     });
   } catch (error) {
-    // console.log(error.message);
     openPopupError(error.message);
   } finally {
     containerApp.loader.style.display = 'none';

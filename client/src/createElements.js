@@ -1,65 +1,7 @@
 import { el } from 'redom';
-import { createTable } from './createTable.js';
 import { openPopup, closePopup } from './popup.js';
-import './style/style.scss';
 import { getIcon } from './svgIcons.js';
-
-function createHeaderApp() {
-  const headerBlock = document.createElement('header'),
-    logo = getIcon('logo'),
-    searchInput = document.createElement('input');
-
-  searchInput.setAttribute('placeholder', 'Введите запрос');
-  searchInput.classList.add('searchInput', 'input-reset');
-
-  headerBlock.classList.add('header');
-  headerBlock.innerHTML += logo;
-  headerBlock.append(searchInput);
-
-  return {
-    headerBlock,
-    searchInput,
-  };
-}
-
-function createBodyApp() {
-  const bodyApp = document.createElement('main'),
-    title = createTitleApp(),
-    table = createTable(),
-    addClientButton = createAddClientButton();
-
-  bodyApp.classList.add('clients', 'd-flex', 'flex-column');
-  bodyApp.append(title, table.table, addClientButton);
-
-  return {
-    bodyApp,
-    table,
-    addClientButton,
-  };
-}
-
-function createTitleApp() {
-  const title = document.createElement('h1');
-
-  title.textContent = 'Клиенты';
-  title.classList.add('clients__title', 'mb-5');
-
-  return title;
-}
-
-function createAddClientButton() {
-  const button = document.createElement('button');
-
-  button.classList.add('button-reset', 'btn', 'addClientButton');
-  button.innerHTML += getIcon('user');
-  button.innerHTML += `Добавить клиента`;
-
-  button.addEventListener('click', () => {
-    openPopup('addClient');
-  });
-
-  return button;
-}
+import { createSelect } from './createCustomSelect.js';
 
 export function createClientItem(client) {
   const cells = createClientCells(client);
@@ -167,34 +109,6 @@ function getClientsDate(date, action) {
   return dateBlock;
 }
 
-export function createContainer() {
-  const header = createHeaderApp(),
-    bodyApp = createBodyApp(),
-    loader = createLoader(),
-    popupError = createPopupError(),
-    popupRemoveClient = createPopup('removeClient'),
-    popupAddClient = createPopup('addClient'),
-    popupUpdateClient = createPopup('updateClient'),
-    container = el('div', { class: 'container' }, [
-      header.headerBlock,
-      bodyApp.bodyApp,
-      loader,
-      popupError,
-      popupRemoveClient,
-      popupAddClient,
-      popupUpdateClient,
-    ]);
-  return {
-    container,
-    bodyApp,
-    loader,
-    popupError,
-    popupRemoveClient,
-    popupAddClient,
-    popupUpdateClient,
-  };
-}
-
 function createActionButton(client) {
   const changeButton = document.createElement('button');
   const deleteButton = document.createElement('button');
@@ -222,49 +136,94 @@ function createActionButton(client) {
     deleteButton,
   };
 }
+export function createInputBlock(field) {
+  const inputBlock = document.createElement('div');
+  const label = document.createElement('label');
+  const input = document.createElement('input');
 
-function createLoader() {
-  const loader = document.createElement('div');
-  loader.innerHTML = `
-    <div class="spinner-border text-primary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-`;
-  loader.classList.add(
-    'loader',
-    'justify-content-center',
-    'align-items-center'
-  );
+  input.classList.add('form__input', 'input-reset');
+  input.setAttribute('name', field);
+  input.setAttribute('id', field);
+  input.setAttribute('type', 'text');
+  input.setAttribute('placeholder', ' ');
 
-  return loader;
+  label.classList.add('form__label');
+  label.setAttribute('for', field);
+
+  inputBlock.classList.add('form__inputBlock');
+
+  inputBlock.append(input, label);
+
+  return { inputBlock, label, input };
 }
 
-function createPopupError() {
-  const popup = createPopup('error');
-  const popupContentBlock = document.createElement('div');
-  const popupContent = document.createElement('p');
-  const closeButton = document.createElement('button');
+export function createInputContact() {
+  const select = createSelect();
+  const contactField = document.createElement('div');
+  const removeContactBtn = document.createElement('button');
+  const removeIcon = getIcon('cancel');
 
-  closeButton.classList.add('popup__close-btn', 'button-reset');
-  popupContentBlock.classList.add('popup__сontent');
-  popupContent.classList.add('popup__text');
+  const input = document.createElement('input');
 
-  closeButton.addEventListener('click', closePopup);
+  input.setAttribute('type', 'text');
+  input.classList.add('form-control', 'inputContact', 'input-reset');
+  input.setAttribute('placeholder', 'Введите данные контакта');
 
-  popupContentBlock.append(popupContent, closeButton);
-  popup.append(popupContentBlock);
-
-  return popup;
-}
-function createPopup(type) {
-  const popup = document.createElement('div');
-  popup.classList.add(
-    'popup',
-    'd-flex',
-    'justify-content-center',
-    'align-items-center'
+  contactField.classList.add(
+    'input-group',
+    'input-reset',
+    'inputContactsGroup',
+    'mb-3'
   );
-  popup.dataset.type = type;
+  removeContactBtn.innerHTML += removeIcon;
 
-  return popup;
+  removeContactBtn.classList.add('button-reset', 'removeContactBtn');
+  contactField.append(select, input, removeContactBtn);
+
+  removeContactBtn.addEventListener('click', () => {
+    removeContactBtn.parentNode.remove();
+  });
+
+  return { contactField, select, input };
+}
+
+export function createContactsBlock({ contacts }) {
+  const contactsBlock = document.createElement('div');
+
+  contacts.forEach((contact) => {
+    const inputContacts = createInputContact();
+    const type = contact.type;
+    const value = contact.value;
+
+    switch (type) {
+      case 'phone':
+        inputContacts.select.value = 'phone';
+        break;
+
+      case 'addPhone':
+        inputContacts.select.value = 'addPhone';
+        break;
+
+      case 'email':
+        inputContacts.select.value = 'email';
+        break;
+
+      case 'vk':
+        inputContacts.select.value = 'vk';
+        break;
+
+      case 'fb':
+        inputContacts.select.value = 'fb';
+        break;
+
+      case 'twitter':
+        inputContacts.select.value = 'twitter';
+        break;
+    }
+    inputContacts.input.value = value;
+
+    contactsBlock.append(inputContacts.contactField);
+  });
+
+  return contactsBlock;
 }

@@ -11,11 +11,6 @@ export function openPopup(goal, client = {}) {
   popup.setAttribute('data-goal', goal);
   popup.classList.add('open');
 }
-export function openPopupError(message) {
-  const popup = document.querySelector(`[data-type="error"]`);
-  popup.querySelector('p').textContent = message;
-  popup.classList.add('open');
-}
 
 function createPopupContent(goal, client) {
   const popupContent = document.createElement('div'),
@@ -108,58 +103,6 @@ function createPopupContent(goal, client) {
   });
 
   return popupContent;
-}
-
-function createContactsInfo({ contacts }) {
-  const contactsBlock = document.createElement('div');
-
-  contacts.forEach((contact) => {
-    const inputContacts = createInputContact();
-    const type = contact.type;
-    const value = contact.value;
-
-    switch (type) {
-      case 'phone':
-        inputContacts.select.value = 'phone';
-        break;
-
-      case 'addPhone':
-        inputContacts.select.value = 'addPhone';
-        break;
-
-      case 'email':
-        inputContacts.select.value = 'email';
-        break;
-
-      case 'vk':
-        inputContacts.select.value = 'vk';
-        break;
-
-      case 'fb':
-        inputContacts.select.value = 'fb';
-        break;
-
-      case 'twitter':
-        inputContacts.select.value = 'twitter';
-        break;
-    }
-    inputContacts.input.value = value;
-
-    contactsBlock.append(inputContacts.contactField);
-  });
-
-  return contactsBlock;
-}
-
-export function closePopup() {
-  const popup = document.querySelector('.popup');
-  const contactsGroups = popup.querySelectorAll('.inputContactsGroup');
-  const form = popup.querySelector('.form');
-  popup.classList.remove('open');
-  contactsGroups.forEach((contact) => contact.remove());
-  if (form) {
-    form.reset();
-  }
 }
 
 function createInputGroup(label, id, type, classGroup, inputValue = '') {
@@ -298,62 +241,4 @@ function removeClient(id) {
 
   const clientsRow = document.querySelector(`[data-id="${id}"]`);
   clientsRow.remove();
-}
-
-function createInputContact() {
-  const contactField = document.createElement('div');
-  const removeContactBtn = document.createElement('button');
-  const removeIcon = getIcon('cancel');
-
-  const select = el(
-    'select',
-    {
-      class: 'form-select',
-      'aria-label': 'Default select example',
-    },
-    [
-      el('option', { value: 'phone' }, 'Телефон'),
-      el('option', { value: 'addPhone' }, 'Доп. телефон'),
-      el('option', { value: 'email' }, 'Email'),
-      el('option', { value: 'vk' }, 'Vk'),
-      el('option', { value: 'fb' }, 'Facebook'),
-      el('option', { value: 'twitter' }, 'Twitter'),
-    ]
-  );
-
-  const input = el(
-    'input',
-    {
-      type: 'text',
-      class: 'form-control inputContact input-reset',
-      'aria-label': 'Text input with dropdown button',
-      placeholder: 'Введите данные контакта',
-    },
-    ''
-  );
-
-  contactField.classList.add(
-    'input-group',
-    'input-reset',
-    'inputContactsGroup',
-    'mb-3'
-  );
-  removeContactBtn.innerHTML += removeIcon;
-
-  removeContactBtn.classList.add('button-reset', 'removeContactBtn');
-  contactField.append(select, input, removeContactBtn);
-
-  removeContactBtn.addEventListener('click', (e) => {
-    removeContactBtn.parentNode.remove();
-  });
-
-  input.addEventListener('input', (e) => {
-    if (input.value.trim()) {
-      removeContactBtn.classList.add('active');
-    } else {
-      removeContactBtn.classList.remove('active');
-    }
-  });
-
-  return { contactField, select, input };
 }

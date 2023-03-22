@@ -1,5 +1,5 @@
 export async function getClientsList() {
-  const response = await fetch(`http://localhost:3000/api/clents`);
+  const response = await fetch(`http://localhost:3000/api/clients`);
 
   if (response.status === 200 || response.status === 201) {
     return await response.json();
