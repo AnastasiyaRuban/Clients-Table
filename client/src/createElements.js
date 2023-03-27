@@ -1,7 +1,8 @@
 import { el } from 'redom';
-import { openPopup, closePopup } from './popup.js';
+import { openPopup } from './popup.js';
 import { getIcon } from './svgIcons.js';
 import { createSelect } from './createCustomSelect.js';
+import { openPopupRemoveClient } from './popupActions.js';
 
 export function createClientItem(client) {
   const cells = createClientCells(client);
@@ -128,7 +129,7 @@ function createActionButton(client) {
   });
 
   deleteButton.addEventListener('click', () => {
-    openPopup('removeClient', client);
+    openPopupRemoveClient(client.id);
   });
 
   return {
@@ -141,11 +142,17 @@ export function createInputBlock(field) {
   const label = document.createElement('label');
   const input = document.createElement('input');
 
-  input.classList.add('form__input', 'input-reset');
+  input.classList.add('form__input', 'input-reset', 'form-control');
   input.setAttribute('name', field);
   input.setAttribute('id', field);
   input.setAttribute('type', 'text');
   input.setAttribute('placeholder', ' ');
+
+  input.addEventListener('input', () => {
+    input.classList.remove('is-invalid');
+    const error = document.querySelector(`[data-error-name=${field}]`);
+    if (error) error.remove();
+  });
 
   label.classList.add('form__label');
   label.setAttribute('for', field);
@@ -168,12 +175,17 @@ export function createInputContact() {
   input.setAttribute('type', 'text');
   input.classList.add('form-control', 'inputContact', 'input-reset');
   input.setAttribute('placeholder', 'Введите данные контакта');
+  input.setAttribute('name', 'contacts');
+  input.addEventListener('input', () => {
+    input.classList.remove('is-invalid');
+    const error = document.querySelector('[data-error-name="contacts"]');
+    if (error) error.remove();
+  });
 
   contactField.classList.add(
     'input-group',
     'input-reset',
-    'inputContactsGroup',
-    'mb-3'
+    'inputContactsGroup'
   );
   removeContactBtn.innerHTML += removeIcon;
 
@@ -184,7 +196,7 @@ export function createInputContact() {
     removeContactBtn.parentNode.remove();
   });
 
-  return { contactField, select, input };
+  return { contactField, select, input, removeContactBtn };
 }
 
 export function createContactsBlock({ contacts }) {

@@ -123,12 +123,8 @@ function createCustomSelect() {
   selectCustomBtn.addEventListener('click', (e) => {
     e.preventDefault();
     selectCustomBtn.classList.toggle('open');
-    console.log(selectCustomList.style.maxHeight);
     if (selectCustomList.style.maxHeight) {
-      selectCustomList.style.maxHeight = null;
-      selectCustomList.style.paddingTop = 0;
-      selectCustomList.style.paddingBottom = 0;
-      selectCustomList.style.borderBottom = 0;
+      closeSelect();
     } else {
       selectCustomList.style.maxHeight =
         selectCustomList.scrollHeight + 20 + 'px';
@@ -137,6 +133,20 @@ function createCustomSelect() {
       selectCustomList.style.borderBottom = '1px solid var(--grey)';
     }
   });
+
+  document.body.addEventListener('click', (e) => {
+    if (e.target != selectCustomBtn) {
+      selectCustomBtn.classList.remove('open');
+      closeSelect();
+    }
+  });
+
+  function closeSelect() {
+    selectCustomList.style.maxHeight = null;
+    selectCustomList.style.paddingTop = 0;
+    selectCustomList.style.paddingBottom = 0;
+    selectCustomList.style.borderBottom = 0;
+  }
 
   selectCustomList.append(
     optionPhone,

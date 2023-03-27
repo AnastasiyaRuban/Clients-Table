@@ -13,24 +13,24 @@
   font-family: "OpenSansRegular";
   font-style: normal;
   font-weight: 400;
-  src: url("../assets//fonts/OpenSans-Regular.woff2") format("woff2"),
-    url("../assets//fonts/OpenSans-Regular.woff") format("woff");
+  src: url("../assets/fonts/OpenSans-Regular.woff2") format("woff2"),
+    url("../assets/fonts/OpenSans-Regular.woff") format("woff");
 }
 
 @font-face {
   font-family: "OpenSansSemiBold";
   font-style: normal;
   font-weight: 600;
-  src: url("../assets//fonts/OpenSans-SemiBold.woff2") format("woff2"),
-    url("../assets//fonts/OpenSans-SemiBold.woff") format("woff");
+  src: url("../assets/fonts/OpenSans-SemiBold.woff2") format("woff2"),
+    url("../assets/fonts/OpenSans-SemiBold.woff") format("woff");
 }
 
 @font-face {
   font-family: "OpenSansBold";
   font-style: normal;
   font-weight: 700;
-  src: url("../assets//fonts/OpenSans-Bold.woff2") format("woff2"),
-    url("../assets//fonts/OpenSans-Bold.woff") format("woff");
+  src: url("../assets/fonts/OpenSans-Bold.woff2") format("woff2"),
+    url("../assets/fonts/OpenSans-Bold.woff") format("woff");
 }
 
 html {
@@ -177,6 +177,15 @@ body {
   overflow: hidden;
   background-color: rgba(51, 51, 51, 0.6);
 
+  &__title {
+    width: 100%;
+    margin-bottom: 32px;
+    padding: 0 30px;
+    color: var(--black);
+    font-size: 18px;
+    font-family: "OpenSansBold";
+  }
+
   &__сontent {
     position: relative;
     min-width: 450px;
@@ -186,6 +195,31 @@ body {
     align-items: center;
     justify-content: center;
     background-color: white;
+  }
+
+  &__action-btn {
+    margin: 0 auto;
+    padding: 12px 35px;
+    margin-bottom: 5px;
+    width: fit-content;
+    background-color: var(--firm);
+    color: #fff;
+    font-family: "OpenSansSemiBold";
+  }
+
+  &__action-btn span {
+    width: 16px;
+    height: 16px;
+    border-width: 3px;
+    color: #b89eff !important;
+  }
+
+  &__additional-btn {
+    margin: 0 auto;
+    width: fit-content;
+    font-size: 12px;
+    border-bottom: 1px solid var(--black);
+    line-height: 10px;
   }
 
   &__text {
@@ -222,6 +256,20 @@ body {
   }
 }
 
+.popup[data-type="removeClient"] .popup__сontent {
+  flex-direction: column;
+}
+.popup[data-type="removeClient"] .popup__title {
+  margin-bottom: 11px;
+  text-align: center;
+}
+.popup[data-type="removeClient"] .popup__text {
+  margin-bottom: 25px;
+  max-width: 275px;
+  font-size: 14px;
+  text-align: center;
+}
+
 .popup.open {
   width: 100%;
   height: 100%;
@@ -232,7 +280,9 @@ body {
   height: 37px;
   width: 100%;
 }
-
+.inputContactsGroup:not(:last-child) {
+  margin-bottom: 15px;
+}
 .dropdown-toggle {
   height: 100%;
   min-width: 123px;
@@ -254,10 +304,8 @@ body {
   height: 100%;
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid var(--txt_grey);
-  border-right: none;
+  border: 1px solid var(--grey);
   color: var(--black);
-  border-left: none;
   color: #b0b0b0;
   font-size: 14px;
 }
@@ -393,8 +441,8 @@ body {
 .removeContactBtn {
   width: 27px;
   height: 100%;
-  border: 1px solid var(--txt_grey);
-  // border-left: none;
+  border: 1px solid var(--grey);
+  border-left: none;
 }
 
 .form-select {
@@ -416,36 +464,9 @@ body {
   display: flex;
   flex-direction: column;
 
-  &__title {
-    width: 100%;
-    margin-bottom: 32px;
-    padding: 0 30px;
-    color: var(--black);
-    font-size: 18px;
-    font-family: "OpenSansBold";
-  }
-
   &__inputs {
     padding: 0 30px;
     margin-bottom: 26px;
-  }
-
-  &__action-btn {
-    margin: 0 auto;
-    padding: 12px 35px;
-    margin-bottom: 5px;
-    width: fit-content;
-    background-color: var(--firm);
-    color: #fff;
-    font-family: "OpenSansSemiBold";
-  }
-
-  &__additional-btn {
-    margin: 0 auto;
-    width: fit-content;
-    font-size: 12px;
-    border-bottom: 1px solid var(--black);
-    line-height: 10px;
   }
 
   &__addContact-btn {
@@ -523,18 +544,39 @@ body {
 
   &__dropdown-button {
     position: relative;
+    display: flex;
+    align-items: center;
     width: 123px;
     padding: 10px 12px;
     border: 1px solid var(--grey);
+    border-right: none;
     text-align: left;
     background-color: var(--grey-light);
     font-weight: 400;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 15px;
     font-family: "OpenSansRegular";
   }
 
+  &__dropdown-button::after {
+    position: absolute;
+    right: 8px;
+    content: "";
+    width: 12px;
+    height: 12px;
+    background-image: url("../assets/images/arrow-select.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    transition: all 0.3s linear;
+  }
+
+  &__dropdown-button.open::after {
+    transform: rotate(180deg);
+  }
+
   &__dropdown-list {
+    position: relative;
     max-height: 0;
     width: 123px;
     overflow: hidden;
@@ -544,7 +586,8 @@ body {
     border-bottom: none;
     padding-left: 12px;
     padding-right: 12px;
-    transition: all 0.3s ease-in;
+    transition: all 0.2s linear;
+    z-index: 5;
   }
 
   &__dropdown-item {
@@ -557,6 +600,16 @@ body {
   &__dropdown-item:not(:last-child) {
     margin-bottom: 9px;
   }
+
+  &__errors:has(.form__error) {
+    padding: 0 30px 25px;
+  }
+
+  &__error {
+    font-size: 10px;
+    line-height: 14px;
+    color: #f06a4d;
+  }
 }
 
 .contacts {
@@ -567,4 +620,7 @@ body {
 
 .contacts:has(.inputContactsGroup) {
   padding: 25px 30px;
+}
+.contacts__inputs:has(.inputContactsGroup) {
+  margin-bottom: 25px;
 }

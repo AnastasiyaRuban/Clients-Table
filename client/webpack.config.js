@@ -11,14 +11,14 @@ module.exports = (env) => ({
   }, //что получаем на выходе
   module: {
     rules: [
-      {
-        test: /\.svg$/,
-        use: [
-          { loader: 'svg-sprite-loader' },
-          'svg-transform-loader',
-          'svgo-loader',
-        ],
-      },
+      // {
+      //   test: /\.svg$/,
+      //   use: [
+      //     { loader: 'svg-sprite-loader' },
+      //     'svg-transform-loader',
+      //     'svgo-loader',
+      //   ],
+      // },
       {
         test: /\.js$/,
         exclude: /node_modules/,

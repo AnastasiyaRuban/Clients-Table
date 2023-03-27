@@ -1,7 +1,11 @@
 import { getIcon } from './svgIcons.js';
 import { createTable } from './createTable.js';
 import { createLoader } from './createSpinner.js';
-import { createPopupError, createPopupClient } from './createPopups.js';
+import {
+  createPopupError,
+  createPopupClient,
+  createPopupRemoveClient,
+} from './createPopups.js';
 import { openPopupCreateClient } from './popupActions.js';
 
 export function createContainer() {
@@ -10,8 +14,8 @@ export function createContainer() {
     bodyApp = createBodyApp(),
     loader = createLoader(),
     popupError = createPopupError(),
-    popupCreateClient = createPopupClient('create');
-  // popupRemoveClient = createPopupRemove('removeClient'),
+    popupCreateClient = createPopupClient('create'),
+    popupRemoveClient = createPopupRemoveClient('removeClient');
   // popupUpdateClient = createPopup('updateClient');
 
   container.classList.add('container');
@@ -20,7 +24,7 @@ export function createContainer() {
     bodyApp.bodyApp,
     loader,
     popupError,
-    // popupRemoveClient,
+    popupRemoveClient,
     popupCreateClient
     // popupUpdateClient
   );

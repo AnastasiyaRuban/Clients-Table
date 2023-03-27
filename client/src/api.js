@@ -18,12 +18,20 @@ export async function createClient(client) {
 
   if (response.status === 200 || response.status === 201) {
     return await response.json();
-  } else {
+  } else if (
+    response.status === 422 ||
+    response.status === 404 ||
+    String(response.status).startsWith('5')
+  ) {
     const errors = await response.json();
-    console.log(errors.errors);
+    const err = new TypeError();
+    err.errorMessages = errors.errors.map((err) => ({
+      name: err.field,
+      message: err.message,
+    }));
+    throw err;
   }
-  // throw new Error();
-  // return await response.json();
+  throw new Error('Что-то пошло не так');
 }
 
 export async function updateClient(clientId, data) {
