@@ -1,8 +1,11 @@
 import { closePopup } from './popupActions';
-import { createLoader } from './createSpinner.js';
-import { createInputBlock, createInputContact } from './createElements.js';
+import {
+  createInputBlock,
+  createInputContact,
+  currentId,
+} from './createElements.js';
 import { getIcon } from './svgIcons';
-import { addClient, removeClient } from './actions.js';
+import { addClient, removeClient, changeClient } from './actions.js';
 
 export function createPopupError() {
   const popupElements = createPopup('error');
@@ -43,16 +46,14 @@ export function createPopupClient(type) {
   inputsBlock.classList.add('form__inputs');
 
   title.classList.add('popup__title', 'title');
-  if (type == 'create') {
-    title.innerHTML = 'Новый клиент';
-    additionalButton.innerHTML = 'Отмена';
-  }
+  title.innerHTML = 'Новый клиент';
+
+  additionalButton.innerHTML = 'Отмена';
   additionalButton.addEventListener('click', closePopup);
 
   addContactButton.classList.add('form__addContact-btn', 'button-reset');
 
   contactsInputsBlock.classList.add('contacts__inputs');
-
   contactsInputsBlock.dataset.amountChild = contactInputsList.length;
 
   addContactButton.innerHTML += getIcon('add');
@@ -87,42 +88,19 @@ export function createPopupClient(type) {
   additionalButton.setAttribute('type', 'button');
 
   form.classList.add('form');
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    let clientData = {};
-    const formData = new FormData(e.target);
-    const name = formData.get('name').trim();
-    const surname = formData.get('surname').trim();
-    const lastName = formData.get('lastName').trim();
-    let contacts = [];
-    const contactsForm = e.target.querySelectorAll('.inputContactsGroup');
-    clientData = {
-      name,
-      surname,
-      lastName,
-      contacts,
-    };
-
-    const inputs = {};
-
-    for (let i = 0; i < form.elements.length; i++) {
-      const input = form.elements[i];
-
-      if (!input.name) continue;
-      inputs[input.name] = input;
-      input.classList.remove('is-invalid');
-    }
-
-    contactsForm.forEach((contact) => {
-      const typeContact = contact.querySelector('select').value;
-      const valueContact = contact.querySelector('input').value.trim();
-
-      contacts.push({ type: typeContact, value: valueContact });
-    });
+    const clientDataElements = makeClientData(e, form);
+    const clientData = clientDataElements.clientData;
+    const inputs = clientDataElements.inputs;
+    const action = popup.getAttribute('data-type');
 
     try {
       actionButton.querySelector('span').style.display = 'inline-block';
-      await addClient(clientData);
+      if (action == 'create') {
+        await addClient(clientData);
+      } else await changeClient(currentId, clientData);
       closePopup();
     } catch (error) {
       if (error.name !== 'TypeError') throw error;
@@ -205,6 +183,9 @@ function createPopup(type) {
   closeButton.classList.add('popup__close-btn', 'button-reset');
 
   closeButton.addEventListener('click', closePopup);
+  popupContentBlock.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
 
   popupContentBlock.append(closeButton);
   popup.append(popupContentBlock);
@@ -213,3 +194,40 @@ function createPopup(type) {
 
   return { popup, popupContentBlock };
 }
+
+function makeClientData(e, form) {
+  let clientData = {};
+  const formData = new FormData(e.target);
+  const name = formData.get('name').trim();
+  const surname = formData.get('surname').trim();
+  const lastName = formData.get('lastName').trim();
+  let contacts = [];
+  const contactsForm = e.target.querySelectorAll('.inputContactsGroup');
+  clientData = {
+    name,
+    surname,
+    lastName,
+    contacts,
+  };
+
+  const inputs = {};
+
+  for (let i = 0; i < form.elements.length; i++) {
+    const input = form.elements[i];
+
+    if (!input.name) continue;
+    inputs[input.name] = input;
+  }
+
+  contactsForm.forEach((contact) => {
+    const typeContact = contact.querySelector('select').value;
+    const valueContact = contact.querySelector('input').value.trim();
+
+    contacts.push({ type: typeContact, value: valueContact });
+  });
+  return { clientData, inputs };
+}
+
+document.body.addEventListener('click', (e) => {
+  closePopup();
+});

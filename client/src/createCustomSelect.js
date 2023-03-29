@@ -1,7 +1,7 @@
-export function createSelect() {
+export function createSelect(contact) {
   const selectBlock = document.createElement('div');
   const selectNative = createNativeSelect(); //select
-  const selectCustomElements = createCustomSelect(); //selectCustom, selectCustomBtn
+  const selectCustomElements = createCustomSelect(contact); //selectCustom, selectCustomBtn
   const selectCustom = selectCustomElements.selectCustom;
   const selectCustomItems = selectCustomElements.optionList;
   const selectCustomList = selectCustomElements.selectCustomList;
@@ -26,7 +26,7 @@ export function createSelect() {
   selectBlock.classList.add('selectBlock');
   selectBlock.append(selectNative, selectCustom);
 
-  return selectBlock;
+  return { selectBlock, selectNative, selectCustom };
 }
 
 function createNativeSelect() {
@@ -41,6 +41,12 @@ function createNativeSelect() {
   select.classList.add('form__select');
   select.name = 'type-contact';
 
+  // if (contact) {
+  //   select.value = contact.type;
+  // } else {
+  //   select.value = 'phone';
+  // }
+
   optionPhone.innerHTML = 'Телефон';
   optionAddPhone.innerHTML = 'Доп. телефон';
   optionEmail.innerHTML = 'Email';
@@ -53,7 +59,7 @@ function createNativeSelect() {
   optionEmail.value = 'email';
   optionVk.value = 'vk';
   optionFb.value = 'fb';
-  optionTwitter.valueML = 'twitter';
+  optionTwitter.value = 'twitter';
 
   select.append(
     optionPhone,
@@ -66,7 +72,7 @@ function createNativeSelect() {
 
   return select;
 }
-function createCustomSelect() {
+function createCustomSelect(contact) {
   const selectCustom = document.createElement('div');
   const selectCustomBtn = document.createElement('button');
   const selectCustomList = document.createElement('ul');
@@ -76,49 +82,42 @@ function createCustomSelect() {
   const optionVk = document.createElement('li');
   const optionFb = document.createElement('li');
   const optionTwitter = document.createElement('li');
-  const optionList = [
-    optionPhone,
-    optionAddPhone,
-    optionEmail,
-    optionVk,
-    optionFb,
-    optionTwitter,
-  ];
+  let optionList = [];
+  let tabIndex = 0;
+
+  const contactTypes = {
+    phone: 'Телефон',
+    addPhone: 'Доп. телефон',
+    email: 'Email',
+    vk: 'Vk',
+    fb: 'Facebook',
+    twitter: 'Twitter',
+  };
 
   selectCustom.classList.add('form__select-custom');
   selectCustomList.classList.add('form__dropdown-list', 'list-reset');
   selectCustomBtn.classList.add('form__dropdown-button', 'button-reset');
 
-  selectCustomBtn.innerHTML = 'Телефон';
-  optionPhone.style.display = 'none';
+  if (!contact) {
+    selectCustomBtn.innerHTML = 'Телефон';
+  } else {
+    selectCustomBtn.innerHTML = contactTypes[contact.type];
+  }
 
-  optionPhone.innerHTML = 'Телефон';
-  optionAddPhone.innerHTML = 'Доп. телефон';
-  optionEmail.innerHTML = 'Email';
-  optionVk.innerHTML = 'Vk';
-  optionFb.innerHTML = 'Facebook';
-  optionTwitter.innerHTML = 'Twitter';
+  for (let [key, value] of Object.entries(contactTypes)) {
+    const option = document.createElement('li');
+    optionList.push(option);
+    option.innerHTML = value;
+    option.tabIndex = String(tabIndex);
+    tabIndex++;
+    option.dataset.value = key;
+    option.classList.add('form__dropdown-item');
+    selectCustomList.append(option);
 
-  optionPhone.tabIndex = '0';
-  optionAddPhone.tabIndex = '1';
-  optionEmail.tabIndex = '2';
-  optionVk.tabIndex = '3';
-  optionFb.tabIndex = '4';
-  optionTwitter.tabIndex = '5';
-
-  optionPhone.dataset.value = 'phone';
-  optionAddPhone.dataset.value = 'addPhone';
-  optionEmail.dataset.value = 'email';
-  optionVk.dataset.value = 'vk';
-  optionFb.dataset.value = 'fb';
-  optionTwitter.dataset.valueML = 'twitter';
-
-  optionPhone.classList.add('form__dropdown-item', 'active');
-  optionAddPhone.classList.add('form__dropdown-item');
-  optionEmail.classList.add('form__dropdown-item');
-  optionVk.classList.add('form__dropdown-item');
-  optionFb.classList.add('form__dropdown-item');
-  optionTwitter.classList.add('form__dropdown-item');
+    if (value == selectCustomBtn.innerHTML) {
+      option.style.display = 'none';
+    }
+  }
 
   selectCustomBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -147,15 +146,6 @@ function createCustomSelect() {
     selectCustomList.style.paddingBottom = 0;
     selectCustomList.style.borderBottom = 0;
   }
-
-  selectCustomList.append(
-    optionPhone,
-    optionAddPhone,
-    optionEmail,
-    optionVk,
-    optionFb,
-    optionTwitter
-  );
 
   selectCustom.append(selectCustomBtn, selectCustomList);
 

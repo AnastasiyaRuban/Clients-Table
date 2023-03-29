@@ -15,9 +15,18 @@ export async function addClient(data) {
     tableBody.append(createClientItem(client));
   });
 }
-export function removeClient(id) {
-  deleteClient(id);
+export function removeClient(clientId) {
+  deleteClient(clientId);
   const tableBody = document.querySelector('.table_body');
-  const clientRow = tableBody.querySelector(`[data-id='${id}']`);
+  const clientRow = tableBody.querySelector(`[data-id='${clientId}']`);
   clientRow.remove();
+}
+export async function changeClient(clientId, data) {
+  await updateClient(clientId, data);
+  const updateClientsList = await getClientsList();
+  const tableBody = document.querySelector('.table_body');
+  tableBody.replaceChildren();
+  updateClientsList.forEach((client) => {
+    tableBody.append(createClientItem(client));
+  });
 }

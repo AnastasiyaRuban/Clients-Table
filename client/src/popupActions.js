@@ -1,3 +1,5 @@
+import { deleteClient } from './createElements.js';
+
 export function openPopupError(message) {
   const popup = document.querySelector(`[data-type="error"]`);
   popup.querySelector('p').textContent = message;
@@ -21,6 +23,19 @@ export function closePopup() {
     const contactsGroups = popup.querySelectorAll('.inputContactsGroup');
     const contactsInputs = popup.querySelector('.contacts__inputs');
     const form = popup.querySelector('.form');
+    const title = popup.querySelector('.title');
+    const additionalBtn = popup.querySelector('.popup__additional-btn');
+
+    if (additionalBtn) {
+      additionalBtn.innerHTML = 'Отмена';
+      additionalBtn.removeEventListener('click', deleteClient);
+      additionalBtn.addEventListener('click', closePopup);
+    }
+
+    if (popup.getAttribute('data-type') == 'changeClient') {
+      popup.dataset.type = 'create';
+      popup.removeAttribute('data-client-id');
+    }
     if (contactsInputs) {
       contactsInputs.dataset.amountChild = 0;
     }
@@ -28,7 +43,16 @@ export function closePopup() {
       contactsGroups.forEach((contact) => contact.remove());
     }
     if (form) {
+      const inputs = form.querySelectorAll('.form__input');
+      const errors = form.querySelector('.form__errors');
+      if (errors) {
+        errors.replaceChildren();
+      }
+      inputs.forEach((input) => input.classList.remove('is-invalid'));
       form.reset();
+    }
+    if (title) {
+      title.innerHTML = 'Новый клиент';
     }
     if (popup.dataset.clientId) {
       popup.removeAttribute('data-client-id');

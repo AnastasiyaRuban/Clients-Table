@@ -1,8 +1,15 @@
 import { el } from 'redom';
-import { openPopup } from './popup.js';
+import { closePopup } from './popupActions.js';
 import { getIcon } from './svgIcons.js';
 import { createSelect } from './createCustomSelect.js';
-import { openPopupRemoveClient } from './popupActions.js';
+import {
+  openPopupRemoveClient,
+  openPopupCreateClient,
+} from './popupActions.js';
+import { removeClient } from './actions.js';
+import { getClient } from './api.js';
+
+export let currentId = null;
 
 export function createClientItem(client) {
   const cells = createClientCells(client);
@@ -124,11 +131,17 @@ function createActionButton(client) {
   deleteButton.innerHTML += cancelIcon;
   deleteButton.innerHTML += 'Удалить';
 
-  changeButton.addEventListener('click', () => {
-    openPopup('changeClient', client);
+  changeButton.addEventListener('click', async function () {
+    currentId = client.id;
+    await rewriteForm(currentId);
+    openPopupCreateClient();
+    const popup = document.querySelector('.popup.open');
+    popup.dataset.type = 'changeClient';
+    popup.dataset.clientId = currentId;
   });
 
-  deleteButton.addEventListener('click', () => {
+  deleteButton.addEventListener('click', (e) => {
+    e.stopPropagation();
     openPopupRemoveClient(client.id);
   });
 
@@ -137,6 +150,12 @@ function createActionButton(client) {
     deleteButton,
   };
 }
+
+export function deleteClient() {
+  removeClient(currentId);
+  closePopup();
+}
+
 export function createInputBlock(field) {
   const inputBlock = document.createElement('div');
   const label = document.createElement('label');
@@ -164,8 +183,11 @@ export function createInputBlock(field) {
   return { inputBlock, label, input };
 }
 
-export function createInputContact() {
-  const select = createSelect();
+export function createInputContact(contact = null) {
+  const selectElements = createSelect(contact);
+  const selectBlock = selectElements.selectBlock;
+  const selectNative = selectElements.selectNative;
+  const selectCustom = selectElements.selectCustom;
   const contactField = document.createElement('div');
   const removeContactBtn = document.createElement('button');
   const removeIcon = getIcon('cancel');
@@ -190,52 +212,85 @@ export function createInputContact() {
   removeContactBtn.innerHTML += removeIcon;
 
   removeContactBtn.classList.add('button-reset', 'removeContactBtn');
-  contactField.append(select, input, removeContactBtn);
+  contactField.append(selectBlock, input, removeContactBtn);
 
   removeContactBtn.addEventListener('click', () => {
     removeContactBtn.parentNode.remove();
   });
 
-  return { contactField, select, input, removeContactBtn };
+  return {
+    contactField,
+    selectBlock,
+    selectNative,
+    selectCustom,
+    input,
+    removeContactBtn,
+  };
 }
 
-export function createContactsBlock({ contacts }) {
-  const contactsBlock = document.createElement('div');
+function createContactBlock(contact) {
+  const inputContactElements = createInputContact(contact);
+  const contactBlock = inputContactElements.contactField;
+  const selectNative = inputContactElements.selectNative;
+  const selectCustom = inputContactElements.selectCustom;
+  const type = contact.type;
+  const value = contact.value;
 
-  contacts.forEach((contact) => {
-    const inputContacts = createInputContact();
-    const type = contact.type;
-    const value = contact.value;
+  switch (type) {
+    case 'phone':
+      selectNative.value = 'phone';
+      break;
 
-    switch (type) {
-      case 'phone':
-        inputContacts.select.value = 'phone';
-        break;
+    case 'addPhone':
+      selectNative.value = 'addPhone';
+      break;
 
-      case 'addPhone':
-        inputContacts.select.value = 'addPhone';
-        break;
+    case 'email':
+      selectNative.value = 'email';
+      break;
 
-      case 'email':
-        inputContacts.select.value = 'email';
-        break;
+    case 'vk':
+      selectNative.value = 'vk';
+      break;
 
-      case 'vk':
-        inputContacts.select.value = 'vk';
-        break;
+    case 'fb':
+      selectNative.value = 'fb';
+      break;
 
-      case 'fb':
-        inputContacts.select.value = 'fb';
-        break;
+    case 'twitter':
+      selectNative.value = 'twitter';
+      break;
+  }
 
-      case 'twitter':
-        inputContacts.select.value = 'twitter';
-        break;
-    }
-    inputContacts.input.value = value;
+  inputContactElements.input.value = value;
 
-    contactsBlock.append(inputContacts.contactField);
+  return contactBlock;
+}
+
+async function rewriteForm(id) {
+  const popupForm = document.querySelector('.form');
+  const nameInput = popupForm.querySelector('[name="name"]');
+  const surnameInput = popupForm.querySelector('[name="surname"]');
+  const lastNameInput = popupForm.querySelector('[name="lastName"]');
+  const contactsBlock = popupForm.querySelector('.contacts__inputs');
+  const title = popupForm.querySelector('.title');
+  const additionalBtn = popupForm.querySelector('.popup__additional-btn');
+  const clientData = await getClient(id);
+  nameInput.value = clientData.name;
+  surnameInput.value = clientData.surname;
+  lastNameInput.value = clientData.lastName;
+
+  title.innerHTML = `Изменить данные <span>ID: ${clientData.id}</span> `;
+
+  additionalBtn.innerHTML = 'Удалить клиента';
+  additionalBtn.removeEventListener('click', closePopup);
+  additionalBtn.addEventListener('click', deleteClient);
+
+  clientData.contacts.forEach((contact) => {
+    const contactBlock = createContactBlock(contact);
+    contactsBlock.append(contactBlock);
   });
 
-  return contactsBlock;
+  const contactInputs = contactsBlock.querySelectorAll('.inputContactsGroup');
+  contactsBlock.dataset.amountChild = contactInputs.length;
 }

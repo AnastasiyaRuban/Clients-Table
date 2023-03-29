@@ -46,11 +46,35 @@ export async function updateClient(clientId, data) {
     }
   );
 
-  return response.json();
+  if (response.status === 200 || response.status === 201) {
+    return await response.json();
+  } else if (
+    response.status === 422 ||
+    response.status === 404 ||
+    String(response.status).startsWith('5')
+  ) {
+    const errors = await response.json();
+    const err = new TypeError();
+    err.errorMessages = errors.errors.map((err) => ({
+      name: err.field,
+      message: err.message,
+    }));
+    throw err;
+  }
+  throw new Error('Что-то пошло не так');
 }
 
 export function deleteClient(clientId) {
   fetch(`http://localhost:3000/api/clients/${clientId}`, {
     method: 'DELETE',
   });
+}
+
+export async function getClient(id) {
+  const response = await fetch(`http://localhost:3000/api/clients/${id}`);
+
+  if (response.status === 200 || response.status === 201) {
+    return await response.json();
+  }
+  throw new Error('Не удалось найти клиента');
 }

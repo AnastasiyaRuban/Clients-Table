@@ -90,7 +90,8 @@ function createAddClientButton() {
   button.innerHTML += getIcon('user');
   button.innerHTML += `Добавить клиента`;
 
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
     openPopupCreateClient();
   });
 
