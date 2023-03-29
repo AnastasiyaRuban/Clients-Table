@@ -7,6 +7,7 @@ import {
   createPopupRemoveClient,
 } from './createPopups.js';
 import { openPopupCreateClient } from './popupActions.js';
+import { showFilteredClients } from './actions.js';
 
 export function createContainer() {
   const container = document.createElement('div'),
@@ -47,6 +48,13 @@ function createHeaderApp() {
 
   searchInput.setAttribute('placeholder', 'Введите запрос');
   searchInput.classList.add('searchInput', 'input-reset');
+
+  searchInput.addEventListener('input', (e) => {
+    setTimeout(() => {
+      const value = e.target.value;
+      showFilteredClients(value);
+    }, 300);
+  });
 
   headerBlock.classList.add('header');
   headerBlock.innerHTML += logo;

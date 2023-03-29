@@ -3,6 +3,7 @@ import {
   createClient,
   deleteClient,
   updateClient,
+  filterClients,
 } from './api';
 import { createClientItem } from './createElements.js';
 
@@ -27,6 +28,15 @@ export async function changeClient(clientId, data) {
   const tableBody = document.querySelector('.table_body');
   tableBody.replaceChildren();
   updateClientsList.forEach((client) => {
+    tableBody.append(createClientItem(client));
+  });
+}
+
+export async function showFilteredClients(search) {
+  const filteredClientsList = await filterClients(search);
+  const tableBody = document.querySelector('.table_body');
+  tableBody.replaceChildren();
+  filteredClientsList.forEach((client) => {
     tableBody.append(createClientItem(client));
   });
 }

@@ -78,3 +78,13 @@ export async function getClient(id) {
   }
   throw new Error('Не удалось найти клиента');
 }
+
+export async function filterClients(search) {
+  const response = await fetch(
+    `http://localhost:3000/api/clients/?search=${search}`
+  );
+
+  if (response.status === 200 || response.status === 201) {
+    return await response.json();
+  }
+}
