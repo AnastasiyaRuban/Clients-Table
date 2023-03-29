@@ -188,18 +188,21 @@ function createPopup(type) {
   const popup = document.createElement('div');
   const closeButton = document.createElement('button');
   const popupContentBlock = document.createElement('div');
+  const popupWrapper = document.createElement('div');
 
   popup.classList.add('popup');
   popupContentBlock.classList.add('popup__сontent');
   closeButton.classList.add('popup__close-btn', 'button-reset');
+  popupWrapper.classList.add('popup__body');
 
   closeButton.addEventListener('click', closePopup);
   popupContentBlock.addEventListener('click', (e) => {
     e.stopPropagation();
   });
 
+  popupWrapper.append(popupContentBlock);
   popupContentBlock.append(closeButton);
-  popup.append(popupContentBlock);
+  popup.append(popupWrapper);
 
   popup.dataset.type = type;
 
