@@ -94,7 +94,7 @@ function createTitleApp() {
 function createAddClientButton() {
   const button = document.createElement('button');
 
-  button.classList.add('button-reset', 'btn', 'addClientButton');
+  button.classList.add('button-reset', 'addClientButton');
   button.innerHTML += getIcon('user');
   button.innerHTML += `Добавить клиента`;
 

@@ -34,21 +34,33 @@ export function createClientItem(client) {
 export function createClientCells(client) {
   const actionButton = createActionButton(client);
   const contactsCell = ctreateContactsCell(client);
+  const contactsBlock = document.createElement('div');
+
+  contactsCell.forEach((btn) => contactsBlock.append(btn));
   const idClient = el('th', `${client.id}`),
     fullName = el('th', `${client.surname} ${client.name} ${client.lastName}`),
     createDate = el('th', getClientsDate(client.createdAt, 'create')),
     updateDate = el('th', getClientsDate(client.updatedAt, 'update')),
-    contacts = el('th', contactsCell),
-    buttons = el('th', { class: 'cell-actions' }, [
-      actionButton.changeButton,
-      actionButton.deleteButton,
-    ]);
+    contacts = el('th', contactsBlock),
+    buttons = el(
+      'th',
+
+      el('div', { class: 'cell-actions' }, [
+        actionButton.changeButton,
+        actionButton.deleteButton,
+      ])
+    );
+
+  contactsBlock.classList.add('table__contacts');
 
   return { idClient, fullName, createDate, updateDate, contacts, buttons };
 }
 
 function ctreateContactsCell(client) {
   const contacts = client.contacts;
+  let amountContactButton = 0;
+  const btnMore = document.createElement('button');
+
   const type = {
     fb: 'Facebook',
     vk: 'Vkontakte',
@@ -58,6 +70,16 @@ function ctreateContactsCell(client) {
     email: 'Email',
   };
   let cell = [];
+
+  btnMore.classList.add('button-reset', 'btnContactMore');
+  btnMore.innerHTML = '+' + String(contacts.length - 4);
+
+  btnMore.addEventListener('click', () => {
+    const parent = btnMore.parentNode;
+    const btnContacts = parent.querySelectorAll('.btn-tooltip');
+    btnContacts.forEach((btn) => (btn.style.display = 'block'));
+    btnMore.style.display = 'none';
+  });
 
   if (contacts) {
     contacts.forEach((contact) => {
@@ -77,17 +99,23 @@ function ctreateContactsCell(client) {
 
       btn.innerHTML += icon;
       btn.classList.add('btn-tooltip', 'button-reset');
-      tooltip.classList.add('contact-tooltip');
 
+      tooltip.classList.add('contact-tooltip');
       tooltip.innerHTML = `<span class="contact-type">${
         type[contact.type]
       }: </span><span class="contact-value">${contact.value}</span>`;
       btn.append(tooltip);
 
       cell.push(btn);
+      amountContactButton++;
+      if (amountContactButton == 4) {
+        cell.push(btnMore);
+      }
+      if (amountContactButton > 4) {
+        btn.style.display = 'none';
+      }
     });
   }
-
   return cell;
 }
 
@@ -125,16 +153,26 @@ function createActionButton(client) {
 
   changeButton.classList.add('action-button', 'button-reset', 'button-change');
   changeButton.innerHTML += editIcon;
+  changeButton.innerHTML +=
+    '<span class="spinner-border text-primary" role="status"></span>';
   changeButton.innerHTML += 'Изменить';
+  changeButton.querySelector('span').style.display = 'none';
 
   deleteButton.classList.add('action-button', 'button-reset', 'button-delete');
   deleteButton.innerHTML += cancelIcon;
+  deleteButton.innerHTML +=
+    '<span class="spinner-border text-primary" role="status"></span>';
   deleteButton.innerHTML += 'Удалить';
+  deleteButton.querySelector('span').style.display = 'none';
 
   changeButton.addEventListener('click', async function () {
+    changeButton.querySelector('span').style.display = 'inline-block';
+    changeButton.querySelector('svg').style.display = 'none';
     currentId = client.id;
     await rewriteForm(currentId);
     openPopupCreateClient();
+    changeButton.querySelector('span').style.display = 'none';
+    changeButton.querySelector('svg').style.display = 'block';
     const popup = document.querySelector('.popup.open');
     popup.dataset.type = 'changeClient';
     popup.dataset.clientId = currentId;
@@ -142,7 +180,13 @@ function createActionButton(client) {
 
   deleteButton.addEventListener('click', (e) => {
     e.stopPropagation();
-    openPopupRemoveClient(client.id);
+    deleteButton.querySelector('span').style.display = 'inline-block';
+    deleteButton.querySelector('svg').style.display = 'none';
+    setTimeout(() => {
+      openPopupRemoveClient(client.id);
+      deleteButton.querySelector('span').style.display = 'none';
+      deleteButton.querySelector('svg').style.display = 'block';
+    }, 300);
   });
 
   return {
@@ -161,7 +205,7 @@ export function createInputBlock(field) {
   const label = document.createElement('label');
   const input = document.createElement('input');
 
-  input.classList.add('form__input', 'input-reset', 'form-control');
+  input.classList.add('form__input', 'input-reset');
   input.setAttribute('name', field);
   input.setAttribute('id', field);
   input.setAttribute('type', 'text');
@@ -191,11 +235,19 @@ export function createInputContact(contact = null) {
   const contactField = document.createElement('div');
   const removeContactBtn = document.createElement('button');
   const removeIcon = getIcon('cancel');
+  const removeContactBtnPopupBlock = document.createElement('div');
+  const removeContactBtnPopup = document.createElement('span');
+
+  removeContactBtn.append(removeContactBtnPopupBlock);
+  removeContactBtnPopupBlock.append(removeContactBtnPopup);
+  removeContactBtnPopup.textContent = 'Удалить контакт';
+  removeContactBtnPopupBlock.classList.add('contact-tooltip');
+  removeContactBtnPopup.classList.add('removeBtnPopup');
 
   const input = document.createElement('input');
 
   input.setAttribute('type', 'text');
-  input.classList.add('form-control', 'inputContact', 'input-reset');
+  input.classList.add('inputContact', 'input-reset');
   input.setAttribute('placeholder', 'Введите данные контакта');
   input.setAttribute('name', 'contacts');
   input.addEventListener('input', () => {
@@ -204,14 +256,14 @@ export function createInputContact(contact = null) {
     if (error) error.remove();
   });
 
-  contactField.classList.add(
-    'input-group',
-    'input-reset',
-    'inputContactsGroup'
-  );
+  contactField.classList.add('input-reset', 'inputContactsGroup');
   removeContactBtn.innerHTML += removeIcon;
 
-  removeContactBtn.classList.add('button-reset', 'removeContactBtn');
+  removeContactBtn.classList.add(
+    'button-reset',
+    'removeContactBtn',
+    'btn-tooltip'
+  );
   contactField.append(selectBlock, input, removeContactBtn);
 
   removeContactBtn.addEventListener('click', () => {

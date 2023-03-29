@@ -110,6 +110,17 @@ export function createPopupClient(type) {
           messageError.classList.add('form__error', 'description');
           messageError.textContent = errorMessage.message;
           messageError.dataset.errorName = errorMessage.name;
+          if (errorMessage.name == 'contacts') {
+            const contactInputs = Array.from(
+              form.querySelectorAll('.inputContact[name="contacts"]')
+            );
+            const emptyContactInputs = contactInputs.filter(
+              (input) => input.value.trim() == ''
+            );
+            emptyContactInputs.forEach((input) =>
+              input.classList.add('is-invalid')
+            );
+          }
           errorBlock.append(messageError);
           if (inputs[errorMessage.name]) {
             inputs[errorMessage.name].classList.add('is-invalid');

@@ -15,8 +15,6 @@ export function createSelect(contact) {
       item.style.display = 'none';
       selectCustomBtn.textContent = selectedItemText;
       selectCustomList.style.maxHeight = 0;
-      selectCustomList.style.paddingTop = 0;
-      selectCustomList.style.paddingBottom = 0;
       selectCustomList.style.borderBottom = 0;
 
       selectNative.value = dataValue;
@@ -40,12 +38,6 @@ function createNativeSelect() {
 
   select.classList.add('form__select');
   select.name = 'type-contact';
-
-  // if (contact) {
-  //   select.value = contact.type;
-  // } else {
-  //   select.value = 'phone';
-  // }
 
   optionPhone.innerHTML = 'Телефон';
   optionAddPhone.innerHTML = 'Доп. телефон';
@@ -126,9 +118,7 @@ function createCustomSelect(contact) {
       closeSelect();
     } else {
       selectCustomList.style.maxHeight =
-        selectCustomList.scrollHeight + 20 + 'px';
-      selectCustomList.style.paddingTop = '10px';
-      selectCustomList.style.paddingBottom = '10px';
+        selectCustomList.scrollHeight + 55 + 'px';
       selectCustomList.style.borderBottom = '1px solid var(--grey)';
     }
   });
@@ -142,8 +132,6 @@ function createCustomSelect(contact) {
 
   function closeSelect() {
     selectCustomList.style.maxHeight = null;
-    selectCustomList.style.paddingTop = 0;
-    selectCustomList.style.paddingBottom = 0;
     selectCustomList.style.borderBottom = 0;
   }
 

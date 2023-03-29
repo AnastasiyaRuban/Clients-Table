@@ -10,11 +10,7 @@ import { createClientItem } from './createElements.js';
 export async function addClient(data) {
   await createClient(data);
   const updateClientsList = await getClientsList();
-  const tableBody = document.querySelector('.table_body');
-  tableBody.replaceChildren();
-  updateClientsList.forEach((client) => {
-    tableBody.append(createClientItem(client));
-  });
+  rerenderTable(updateClientsList);
 }
 export function removeClient(clientId) {
   deleteClient(clientId);
@@ -25,18 +21,18 @@ export function removeClient(clientId) {
 export async function changeClient(clientId, data) {
   await updateClient(clientId, data);
   const updateClientsList = await getClientsList();
-  const tableBody = document.querySelector('.table_body');
-  tableBody.replaceChildren();
-  updateClientsList.forEach((client) => {
-    tableBody.append(createClientItem(client));
-  });
+  rerenderTable(updateClientsList);
 }
 
 export async function showFilteredClients(search) {
   const filteredClientsList = await filterClients(search);
+  rerenderTable(filteredClientsList);
+}
+
+function rerenderTable(list) {
   const tableBody = document.querySelector('.table_body');
   tableBody.replaceChildren();
-  filteredClientsList.forEach((client) => {
-    tableBody.append(createClientItem(client));
+  list.forEach((item) => {
+    tableBody.append(createClientItem(item));
   });
 }
