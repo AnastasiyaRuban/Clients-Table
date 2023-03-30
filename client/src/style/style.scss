@@ -64,9 +64,11 @@ body {
 
 th {
   vertical-align: middle;
+  font-weight: 400;
+  font-size: 14px;
 }
 
-.container {
+.wrapper {
   margin: 0 auto;
   max-width: 1366px;
 }
@@ -191,6 +193,12 @@ th {
     overflow-x: hidden;
   }
 
+  &__body {
+    opacity: 0;
+    transform: perspective(600px) translate(0px, -100%) rotateX(45deg);
+    transition: all 0.3s ease-in-out;
+  }
+
   &__сontent {
     position: relative;
     min-width: 450px;
@@ -200,9 +208,6 @@ th {
     align-items: center;
     justify-content: center;
     background-color: white;
-    opacity: 0;
-    transform: perspective(600px) translate(0px, -100%) rotateX(45deg);
-    transition: all 0.3s ease-in-out;
   }
 
   &__action-btn {
@@ -282,7 +287,7 @@ th {
   opacity: 1;
   visibility: visible;
 }
-.popup.open .popup__сontent {
+.popup.open .popup__body {
   transform: perspective(600px) translate(0px, 0px) rotateX(0deg);
   opacity: 1;
 }
@@ -442,6 +447,7 @@ th {
   &__head-btn {
     display: flex;
     align-items: center;
+    text-align: start;
     gap: 5px;
     transition: all 0.3s ease-in-out;
   }
@@ -451,9 +457,11 @@ th {
   }
 
   &__head-btn svg {
+    flex: 0 0 8px;
     opacity: 0.7;
     transition: all 0.3s ease-in-out;
   }
+
   &__head-btn:hover svg {
     opacity: 1;
   }
@@ -464,6 +472,14 @@ th {
 
   &__head-btn[data-direction="descending"] svg {
     transform: rotate(180deg);
+  }
+
+  &__head-btn[data-sort="surname"]:after {
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  &__head-btn[data-sort="surname"].active:after {
+    opacity: 1;
   }
 
   &__head-btn[data-sort="surname"][data-direction="ascending"]:after {
@@ -795,7 +811,7 @@ th {
   border-radius: 100%;
   font-weight: 600;
   font-size: 8px;
-  line-height: 12px;
+  line-height: 11px;
 }
 
 .removeBtnPopup {
@@ -803,4 +819,21 @@ th {
   font-size: 12px;
   line-height: 16px;
   color: #ffffff;
+}
+
+.table__head-btn.active svg {
+  opacity: 1;
+}
+
+.client__create-time,
+.client__update-time {
+  color: var(--txt_grey);
+}
+
+.client__update,
+.client__create {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
 }

@@ -138,6 +138,7 @@ function getTime(date) {
 function getClientsDate(date, action) {
   const dateBlock = el(
     'div',
+    { class: `client__${action}` },
     el('span', { class: `client__${action}-date` }, `${getDate(date)}`),
     el('span', { class: `client__${action}-time` }, `${getTime(date)}`)
   );
@@ -171,6 +172,7 @@ function createActionButton(client) {
     currentId = client.id;
     await rewriteForm(currentId);
     openPopupCreateClient();
+    window.location.hash = `#${currentId}`;
     changeButton.querySelector('span').style.display = 'none';
     changeButton.querySelector('svg').style.display = 'block';
     const popup = document.querySelector('.popup.open');
@@ -319,7 +321,7 @@ function createContactBlock(contact) {
   return contactBlock;
 }
 
-async function rewriteForm(id) {
+export async function rewriteForm(id) {
   const popupForm = document.querySelector('.form');
   const nameInput = popupForm.querySelector('[name="name"]');
   const surnameInput = popupForm.querySelector('[name="surname"]');

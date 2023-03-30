@@ -7,7 +7,7 @@ export function openPopupError(message) {
 }
 
 export function openPopupCreateClient() {
-  const popup = document.querySelector(`[data-type="create"]`);
+  const popup = document.querySelector(`#create-change`);
   popup.classList.add('open');
 }
 export function openPopupRemoveClient(id) {
@@ -45,11 +45,13 @@ export function closePopup() {
     if (form) {
       const inputs = form.querySelectorAll('.form__input');
       const errors = form.querySelector('.form__errors');
+      const btn = form.querySelector('.popup__action-btn');
       if (errors) {
         errors.replaceChildren();
       }
       inputs.forEach((input) => input.classList.remove('is-invalid'));
       form.reset();
+      btn.removeAttribute('disabled');
     }
     if (title) {
       title.innerHTML = 'Новый клиент';
@@ -59,4 +61,6 @@ export function closePopup() {
     }
     popup.classList.remove('open');
   });
+
+  window.location.hash = '';
 }

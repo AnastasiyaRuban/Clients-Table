@@ -37,6 +37,7 @@ export function createPopupClient(type) {
   const contactInputsList = document.querySelectorAll('.inputContactsGroup');
   const errorBlock = document.createElement('div');
 
+  popup.setAttribute('id', 'create-change');
   errorBlock.classList.add('form__errors');
 
   inputSurname.label.innerHTML = 'Фамилия <span>*</span>';
@@ -91,6 +92,7 @@ export function createPopupClient(type) {
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    actionButton.setAttribute('disabled', true);
     const clientDataElements = makeClientData(e, form);
     const clientData = clientDataElements.clientData;
     const inputs = clientDataElements.inputs;

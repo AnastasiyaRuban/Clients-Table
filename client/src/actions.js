@@ -5,7 +5,8 @@ import {
   updateClient,
   filterClients,
 } from './api';
-import { createClientItem } from './createElements.js';
+import { createClientItem, rewriteForm } from './createElements.js';
+import { openPopupCreateClient, openPopupError } from './popupActions.js';
 
 export async function addClient(data) {
   await createClient(data);
@@ -35,4 +36,12 @@ function rerenderTable(list) {
   list.forEach((item) => {
     tableBody.append(createClientItem(item));
   });
+}
+
+export async function checkUrl() {
+  const urlHash = window.location.hash;
+  if (urlHash) {
+    await rewriteForm(urlHash.slice(1));
+    openPopupCreateClient();
+  }
 }

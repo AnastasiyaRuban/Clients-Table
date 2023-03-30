@@ -17,9 +17,8 @@ export function createContainer() {
     popupError = createPopupError(),
     popupCreateClient = createPopupClient('create'),
     popupRemoveClient = createPopupRemoveClient('removeClient');
-  // popupUpdateClient = createPopup('updateClient');
 
-  container.classList.add('container');
+  container.classList.add('wrapper');
   container.append(
     header.headerBlock,
     bodyApp.bodyApp,
@@ -27,7 +26,6 @@ export function createContainer() {
     popupError,
     popupRemoveClient,
     popupCreateClient
-    // popupUpdateClient
   );
 
   return {
@@ -35,22 +33,30 @@ export function createContainer() {
     bodyApp,
     loader,
     popupError,
-    // popupRemoveClient,
+    popupRemoveClient,
     popupCreateClient,
-    // popupUpdateClient,
   };
 }
 
 function createHeaderApp() {
-  const headerBlock = document.createElement('header'),
-    logo = getIcon('logo'),
-    searchInput = document.createElement('input');
+  const headerBlock = document.createElement('header');
+  const logo = getIcon('logo');
+  const serachBlock = document.createElement('div');
+  const searchInput = document.createElement('input');
+  const filteredList = document.createElement('ul');
+  let timerID = 0;
+
+  serachBlock.append(searchInput, filteredList);
+  serachBlock.classList.add('search-block');
+
+  filteredList.classList.add('filtered-list', 'list-reset');
 
   searchInput.setAttribute('placeholder', 'Введите запрос');
   searchInput.classList.add('searchInput', 'input-reset');
 
   searchInput.addEventListener('input', (e) => {
-    setTimeout(() => {
+    clearTimeout(timerID);
+    timerID = setTimeout(() => {
       const value = e.target.value;
       showFilteredClients(value);
     }, 300);
@@ -58,7 +64,7 @@ function createHeaderApp() {
 
   headerBlock.classList.add('header');
   headerBlock.innerHTML += logo;
-  headerBlock.append(searchInput);
+  headerBlock.append(serachBlock);
 
   return {
     headerBlock,

@@ -68,12 +68,7 @@ function createCustomSelect(contact) {
   const selectCustom = document.createElement('div');
   const selectCustomBtn = document.createElement('button');
   const selectCustomList = document.createElement('ul');
-  const optionPhone = document.createElement('li');
-  const optionAddPhone = document.createElement('li');
-  const optionEmail = document.createElement('li');
-  const optionVk = document.createElement('li');
-  const optionFb = document.createElement('li');
-  const optionTwitter = document.createElement('li');
+  const popupContent = document.querySelectorAll('.popup .popup__сontent')[2];
   let optionList = [];
   let tabIndex = 0;
 
@@ -113,6 +108,7 @@ function createCustomSelect(contact) {
 
   selectCustomBtn.addEventListener('click', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     selectCustomBtn.classList.toggle('open');
     if (selectCustomList.style.maxHeight) {
       closeSelect();
@@ -123,11 +119,9 @@ function createCustomSelect(contact) {
     }
   });
 
-  document.body.addEventListener('click', (e) => {
-    if (e.target != selectCustomBtn) {
-      selectCustomBtn.classList.remove('open');
-      closeSelect();
-    }
+  popupContent.addEventListener('click', (e) => {
+    selectCustomBtn.classList.remove('open');
+    closeSelect();
   });
 
   function closeSelect() {
