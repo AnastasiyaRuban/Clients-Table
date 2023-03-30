@@ -95,8 +95,8 @@ function createCustomSelect(contact) {
     const option = document.createElement('li');
     optionList.push(option);
     option.innerHTML = value;
-    option.tabIndex = String(tabIndex);
-    tabIndex++;
+    // option.tabIndex = String(tabIndex);
+    // tabIndex++;
     option.dataset.value = key;
     option.classList.add('form__dropdown-item');
     selectCustomList.append(option);

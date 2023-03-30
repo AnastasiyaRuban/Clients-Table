@@ -8,6 +8,7 @@ import {
 } from './createPopups.js';
 import { openPopupCreateClient } from './popupActions.js';
 import { showFilteredClients } from './actions.js';
+import { filterClients } from './api';
 
 export function createContainer() {
   const container = document.createElement('div'),
@@ -16,7 +17,8 @@ export function createContainer() {
     loader = createLoader(),
     popupError = createPopupError(),
     popupCreateClient = createPopupClient('create'),
-    popupRemoveClient = createPopupRemoveClient('removeClient');
+    popupRemoveClient = createPopupRemoveClient('removeClient'),
+    input = header.searchInput;
 
   container.classList.add('wrapper');
   container.append(
@@ -41,33 +43,87 @@ export function createContainer() {
 function createHeaderApp() {
   const headerBlock = document.createElement('header');
   const logo = getIcon('logo');
-  const serachBlock = document.createElement('div');
+  const searchBlock = document.createElement('div');
   const searchInput = document.createElement('input');
   const filteredList = document.createElement('ul');
+  const customInput = document.createElement('div');
+  const spinner = document.createElement('span');
   let timerID = 0;
 
-  serachBlock.append(searchInput, filteredList);
-  serachBlock.classList.add('search-block');
+  customInput.classList.add('customInput');
+
+  searchBlock.classList.add('search-block');
 
   filteredList.classList.add('filtered-list', 'list-reset');
 
   searchInput.setAttribute('placeholder', 'Введите запрос');
   searchInput.classList.add('searchInput', 'input-reset');
 
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(timerID);
-    timerID = setTimeout(() => {
-      const value = e.target.value;
-      showFilteredClients(value);
-    }, 300);
-  });
+  spinner.setAttribute('role', 'status');
+  spinner.classList.add('spinner-border', 'text-primary');
+  spinner.style.display = 'none';
 
   headerBlock.classList.add('header');
   headerBlock.innerHTML += logo;
-  headerBlock.append(serachBlock);
+
+  customInput.prepend(searchInput, spinner);
+  searchBlock.append(customInput, filteredList);
+  headerBlock.append(searchBlock);
+
+  searchInput.addEventListener('input', (e) => {
+    const value = e.target.value.trim();
+    clearTimeout(timerID);
+    filteredList.replaceChildren();
+    filteredList.style.borderBottom = 'none';
+    timerID = setTimeout(async () => {
+      if (value == '') filteredList.replaceChildren();
+      else {
+        spinner.style.display = 'block';
+        const filteredClientsList = await filterClients(value);
+        if (filteredClientsList.length == 0) {
+          const itemList = document.createElement('li');
+          itemList.classList.add('filtered-none');
+          itemList.textContent = 'Совпадений не найдено';
+          filteredList.append(itemList);
+          filteredList.style.borderBottom = '1px solid rgba(51, 51, 51, 0.2)';
+          spinner.style.display = 'none';
+        } else {
+          filteredClientsList.forEach((item) => {
+            const link = document.createElement('button');
+            const itemList = document.createElement('li');
+            itemList.classList.add('filtered-item');
+            link.classList.add('button-reset', 'filtered-link');
+            link.dataset.target = item.id;
+            link.textContent = item.name + ' ' + item.surname;
+            itemList.append(link);
+            filteredList.append(itemList);
+            filteredList.style.borderBottom = '1px solid rgba(51, 51, 51, 0.2)';
+            spinner.style.display = 'none';
+            link.addEventListener('click', goToClient);
+          });
+        }
+      }
+    }, 300);
+  });
+
+  function goToClient(e) {
+    const el = e.target;
+    const dataId = el.getAttribute('data-target');
+    const clientInTable = document.querySelector(`[data-id="${dataId}"]`);
+    clientInTable.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    clientInTable.style.outline = '2px solid #9873ff';
+    setTimeout(() => {
+      clientInTable.style.outline = 'none';
+    }, 1500);
+    console.log(e);
+    el.offsetParent.replaceChildren();
+    searchInput.value = '';
+  }
 
   return {
     headerBlock,
+    filteredList,
+    customInput,
     searchInput,
   };
 }

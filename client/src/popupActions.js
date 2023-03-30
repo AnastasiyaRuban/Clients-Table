@@ -8,12 +8,16 @@ export function openPopupError(message) {
 
 export function openPopupCreateClient() {
   const popup = document.querySelector(`#create-change`);
+  const actionBtn = popup.querySelector('.popup__action-btn');
   popup.classList.add('open');
+  actionBtn.focus();
 }
 export function openPopupRemoveClient(id) {
   const popup = document.querySelector(`[data-type="removeClient"]`);
   popup.dataset.clientId = id;
+  const actionBtn = popup.querySelector('.popup__action-btn');
   popup.classList.add('open');
+  actionBtn.focus();
 }
 
 export function closePopup() {
@@ -25,6 +29,9 @@ export function closePopup() {
     const form = popup.querySelector('.form');
     const title = popup.querySelector('.title');
     const additionalBtn = popup.querySelector('.popup__additional-btn');
+    const actionBtn = popup.querySelector('.popup__action-btn');
+
+    actionBtn.blur();
 
     if (additionalBtn) {
       additionalBtn.innerHTML = 'Отмена';
