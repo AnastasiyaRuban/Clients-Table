@@ -1,10 +1,12 @@
 export async function getClientsList() {
-  const response = await fetch(`http://localhost:3000/api/clients`);
-
-  if (response.status === 200 || response.status === 201) {
-    return await response.json();
+  try {
+    const response = await fetch(`http://localhost:3000/api/clients`);
+    if (response.status === 200 || response.status === 201) {
+      return await response.json();
+    }
+  } catch (error) {
+    throw new Error('Не удалось загрузить список клиентов');
   }
-  throw new Error('Не удалось загрузить список клиентов');
 }
 
 export async function createClient(client) {
@@ -80,11 +82,14 @@ export async function getClient(id) {
 }
 
 export async function filterClients(search) {
-  const response = await fetch(
-    `http://localhost:3000/api/clients/?search=${search}`
-  );
-
-  if (response.status === 200 || response.status === 201) {
-    return await response.json();
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/clients/?search=${search}`
+    );
+    if (response.status === 200 || response.status === 201) {
+      return await response.json();
+    }
+  } catch (error) {
+    throw new Error('Повторите запрос позже');
   }
 }

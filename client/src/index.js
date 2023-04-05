@@ -23,3 +23,9 @@ import './style/style.scss';
   }
   window.addEventListener('hashchange', checkUrl, false);
 })();
+
+document.body.addEventListener('click', () => {
+  const filteredList = document.querySelector('.filtered-list');
+  filteredList.style.borderBottom = 'none';
+  filteredList.replaceChildren();
+});

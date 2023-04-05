@@ -69,7 +69,13 @@ th {
 }
 
 tr {
-  transition: all 0.8s ease-in-out;
+  outline: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+tr.active {
+  // outline: 2px solid #9873ff;
+  outline-color: #9873ff;
 }
 
 .wrapper {
@@ -480,6 +486,7 @@ tr {
   gap: 3px;
   display: flex;
   align-items: center;
+  line-height: 1;
 }
 
 .table {
@@ -858,7 +865,6 @@ tr {
   border-radius: 100%;
   font-weight: 600;
   font-size: 8px;
-  line-height: 11px;
 }
 
 .removeBtnPopup {

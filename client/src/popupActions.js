@@ -31,7 +31,9 @@ export function closePopup() {
     const additionalBtn = popup.querySelector('.popup__additional-btn');
     const actionBtn = popup.querySelector('.popup__action-btn');
 
-    actionBtn.blur();
+    if (actionBtn) {
+      actionBtn.blur();
+    }
 
     if (additionalBtn) {
       additionalBtn.innerHTML = 'Отмена';

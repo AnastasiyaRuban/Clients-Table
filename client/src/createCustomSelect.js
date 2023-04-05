@@ -1,7 +1,7 @@
 export function createSelect(contact) {
   const selectBlock = document.createElement('div');
-  const selectNative = createNativeSelect(); //select
-  const selectCustomElements = createCustomSelect(contact); //selectCustom, selectCustomBtn
+  const selectNative = createNativeSelect();
+  const selectCustomElements = createCustomSelect(contact);
   const selectCustom = selectCustomElements.selectCustom;
   const selectCustomItems = selectCustomElements.optionList;
   const selectCustomList = selectCustomElements.selectCustomList;
@@ -95,8 +95,6 @@ function createCustomSelect(contact) {
     const option = document.createElement('li');
     optionList.push(option);
     option.innerHTML = value;
-    // option.tabIndex = String(tabIndex);
-    // tabIndex++;
     option.dataset.value = key;
     option.classList.add('form__dropdown-item');
     selectCustomList.append(option);

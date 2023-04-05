@@ -6,8 +6,9 @@ import {
   createPopupClient,
   createPopupRemoveClient,
 } from './createPopups.js';
+import { openPopupError } from './popupActions.js';
 import { openPopupCreateClient } from './popupActions.js';
-import { showFilteredClients } from './actions.js';
+// import { showFilteredClients } from './actions.js';
 import { filterClients } from './api';
 
 export function createContainer() {
@@ -72,38 +73,51 @@ function createHeaderApp() {
 
   searchInput.addEventListener('input', (e) => {
     const value = e.target.value.trim();
+    filteredList.innerHTML = '';
     clearTimeout(timerID);
-    filteredList.replaceChildren();
     filteredList.style.borderBottom = 'none';
     timerID = setTimeout(async () => {
       if (value == '') filteredList.replaceChildren();
       else {
-        spinner.style.display = 'block';
-        const filteredClientsList = await filterClients(value);
-        if (filteredClientsList.length == 0) {
-          const itemList = document.createElement('li');
-          itemList.classList.add('filtered-none');
-          itemList.textContent = 'Совпадений не найдено';
-          filteredList.append(itemList);
+        try {
+          spinner.style.display = 'block';
+          const filteredClientsList = await filterClients(value);
+          filteredList.replaceChildren();
+          if (filteredClientsList.length == 0) {
+            const itemList = document.createElement('li');
+            itemList.classList.add('filtered-none');
+            itemList.textContent = 'Совпадений не найдено';
+            filteredList.append(itemList);
+            // filteredList.style.borderBottom = '1px solid rgba(51, 51, 51, 0.2)';
+            // spinner.style.display = 'none';
+          } else {
+            filteredClientsList.forEach((item) => {
+              const link = document.createElement('button');
+              const itemList = document.createElement('li');
+              itemList.classList.add('filtered-item');
+              link.classList.add('button-reset', 'filtered-link');
+              link.dataset.target = item.id;
+              link.textContent = item.name + ' ' + item.surname;
+              itemList.append(link);
+              filteredList.append(itemList);
+              // filteredList.style.borderBottom =
+              //   '1px solid rgba(51, 51, 51, 0.2)';
+              // spinner.style.display = 'none';
+              link.addEventListener('click', goToClient);
+            });
+          }
+        } catch (error) {
+          openPopupError(error.message);
+        } finally {
           filteredList.style.borderBottom = '1px solid rgba(51, 51, 51, 0.2)';
           spinner.style.display = 'none';
-        } else {
-          filteredClientsList.forEach((item) => {
-            const link = document.createElement('button');
-            const itemList = document.createElement('li');
-            itemList.classList.add('filtered-item');
-            link.classList.add('button-reset', 'filtered-link');
-            link.dataset.target = item.id;
-            link.textContent = item.name + ' ' + item.surname;
-            itemList.append(link);
-            filteredList.append(itemList);
-            filteredList.style.borderBottom = '1px solid rgba(51, 51, 51, 0.2)';
-            spinner.style.display = 'none';
-            link.addEventListener('click', goToClient);
-          });
         }
       }
     }, 300);
+  });
+
+  searchInput.addEventListener('click', (e) => {
+    e.stopPropagation();
   });
 
   function goToClient(e) {
@@ -111,11 +125,12 @@ function createHeaderApp() {
     const dataId = el.getAttribute('data-target');
     const clientInTable = document.querySelector(`[data-id="${dataId}"]`);
     clientInTable.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    clientInTable.style.outline = '2px solid #9873ff';
+    clientInTable.classList.add('active');
     setTimeout(() => {
-      clientInTable.style.outline = 'none';
-    }, 1500);
-    console.log(e);
+      clientInTable.classList.remove('active');
+    }, 3000);
+    console.log(el.offsetParent);
+    el.offsetParent.style.borderBottom = 'none';
     el.offsetParent.replaceChildren();
     searchInput.value = '';
   }
